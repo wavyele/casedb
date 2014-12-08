@@ -11,25 +11,28 @@ package org.kemricdc.constants;
  */
 public enum Event {
 
-    HIV_DIAGNOSIS("sdfsd"),
-    HIV_CARE_INITIATION("sdfsd"),
-    TRANSFER_IN("sdfsd"),
-    CD4_COUNT("sdfsd"),
-    VIRAL_LOAD("sdfsd"),
-    CHANGE_IN_REGIMEN("sdfsd"),
-    WHO_STAGE_1("sdfsd"),
-    WHO_STAGE_2("sdfsd"),
-    WHO_STAGE_3("sdfsd"),
-    WHO_STAGE_4("sdfsd"),
-    TB_DIAGNOSIS("sdfsd"),
-    TB_TREATMENT("sdfsd"),
-    LOST_TO_FOLLOWUP("sdfsd"),
-    DECEASED("sdfsd"),
-    FIRST_LINE_REGIMEN("sdfsd"),
-    SECOND_LINE_REGIMEN("sdfsd"),
-    PMTCT_INITIATION("sdfsd"),
-    BIRTH("birth"),
-    TRANSFER_OUT("sdfsd");
+    HIV_DIAGNOSIS("HIV_DIAGNOSIS"),
+    HIV_CARE_INITIATION("HIV_CARE_INITIATION"),
+    ART_START("ART_START"),
+    PEP_DATE("PEP_DATE"),
+    TRANSFER_IN("TRANSFER_IN"),
+    CD4_COUNT("CD4_COUNT"),
+    VIRAL_LOAD("VIRAL_LOAD"),
+    WHO_STAGE_1("WHO_STAGE_1"),
+    WHO_STAGE_2("WHO_STAGE_2"),
+    WHO_STAGE_3("WHO_STAGE_3"),
+    WHO_STAGE_4("WHO_STAGE_4"),
+    TB_DIAGNOSIS("TB_DIAGNOSIS"),
+    TB_TREATMENT("TB_TREATMENT"),
+    LOST_TO_FOLLOWUP("LOST_TO_FOLLOWUP"),
+    DECEASED("DECEASED"),
+    CHANGE_IN_REGIMEN("CHANGE_IN_REGIMEN"),
+    FIRST_LINE_REGIMEN("FIRST_LINE_REGIMEN"),
+    SECOND_LINE_REGIMEN("SECOND_LINE_REGIMEN"),
+    PMTCT_INITIATION("PMTCT_INITIATION"),
+    BIRTH("BIRTH"),
+    TRANSFER_OUT("TRANSFER_OUT");
+    
 
     private final String event;
 

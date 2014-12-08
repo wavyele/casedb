@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.Location" table="location" catalog="casebased">
+        <id name="locationId" type="int">
+            <column name="location_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="villageName" type="string">
+            <column name="village_name" length="45" />
+        </property>
+        <property name="county" type="string">
+            <column name="county" length="45" />
+        </property>
+        <property name="subcounty" type="string">
+            <column name="subcounty" length="45" />
+        </property>
+        <property name="district" type="string">
+            <column name="district" length="45" />
+        </property>
+        <property name="location" type="string">
+            <column name="location" length="45" />
+        </property>
+        <property name="subLocation" type="string">
+            <column name="sub_location" length="45" />
+        </property>
+        <property name="landmark" type="string">
+            <column name="landmark" length="45" />
+        </property>
+        <set name="persons" table="person" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="location_id" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Person" />
+        </set>
+        <set name="facilities" table="facility" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="location_id" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Facility" />
+        </set>
+    </class>
+</hibernate-mapping>

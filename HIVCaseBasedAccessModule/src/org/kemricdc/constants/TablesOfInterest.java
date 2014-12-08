@@ -34,7 +34,19 @@ public enum TablesOfInterest {
     TLKADHERENCEUNSATISFACTORY("tlkadherenceunsatisfactory"),
     TLKFPMETHOD("tlkfpmethod"),
     TLKARTSIDEEFFECTS("tlkartsideeffects"),
-    TLKOI_CODE("tlkoi_code");
+    TLKOI_CODE("tlkoi_code"),
+    TBL_POSSIBLEARVS("tbl_possiblearvs"),
+    TBL_POSSIBLEARVSCODES("tbl_possiblearvscodes"),
+    TBL_VALUEBYPASS("tbl_valuebypass"),
+    TBLARTDRUGHISTORY("tblartdrughistory"),
+    TBLARTINTERRUPTIONS("tblartinterruptions"),
+    TBLBUDIRTIME("tblbudirtime"),
+    TBLLOST_TO_FOLLOWUP("tbllost_to_followup"),
+    TBLSECURITY("tblsecurity"),
+    TBLSUBSTITUTECODESREG("tblsubstitutecodesreg"),
+    TBLSUBSTITUTEREGREASON("tblsubstituteregreason"),
+    TBLTABLESTOBACKUP("tbltablestobackup"),
+    TBLUNSATISFACTORYFLUCONAZOL("tblunsatisfactoryfluconazol");
     
     
     private final String value;

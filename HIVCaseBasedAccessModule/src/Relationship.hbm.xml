@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.Relationship" table="relationship" catalog="casebased">
+        <composite-id name="id" class="org.kemricdc.entities.RelationshipId">
+            <key-property name="personaId" type="int">
+                <column name="persona_id" />
+            </key-property>
+            <key-property name="personbId" type="int">
+                <column name="personb_id" />
+            </key-property>
+            <key-property name="relationshipTypeId" type="int">
+                <column name="relationship_type_id" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="personByPersonaId" class="org.kemricdc.entities.Person" update="false" insert="false" fetch="select">
+            <column name="persona_id" not-null="true">
+                <comment>person of reference</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="personByPersonbId" class="org.kemricdc.entities.Person" update="false" insert="false" fetch="select">
+            <column name="personb_id" not-null="true">
+                <comment>the relative</comment>
+            </column>
+        </many-to-one>
+        <many-to-one name="relationshipType" class="org.kemricdc.entities.RelationshipType" update="false" insert="false" fetch="select">
+            <column name="relationship_type_id" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

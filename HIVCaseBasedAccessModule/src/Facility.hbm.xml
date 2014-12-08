@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.Facility" table="facility" catalog="casebased">
+        <id name="mflcode" type="int">
+            <column name="mflcode" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="location" class="org.kemricdc.entities.Location" fetch="select">
+            <column name="location_id" not-null="true" />
+        </many-to-one>
+        <property name="facilityname" type="string">
+            <column name="facilityname" length="45" />
+        </property>
+        <set name="personeventses" table="personevents" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="facility_mflcode" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Personevents" />
+        </set>
+    </class>
+</hibernate-mapping>

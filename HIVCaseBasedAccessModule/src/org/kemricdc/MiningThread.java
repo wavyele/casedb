@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 import org.kemricdc.constants.Operation;
 import org.kemricdc.dao.DatabaseUtils;
 import org.kemricdc.dao.TransactionIdManager;
-import org.kemricdc.entities.Transaction;
-import org.kemricdc.entities.TransactionSet;
+import org.kemricdc.utils.Transaction;
+import org.kemricdc.utils.TransactionSet;
 
 /**
  *
@@ -32,7 +32,7 @@ public class MiningThread {
     public MiningThread() {
         con = DatabaseUtils.getInstance().getConnection();
         lastTransactionId = TransactionIdManager.getInstance().getLastTransactionId();
-        System.out.println("The last transaction id was....." + lastTransactionId);
+        System.out.println("Last Transaction ID....." + lastTransactionId);
     }
 
     public List<TransactionSet>  processTransactions() {
@@ -46,7 +46,7 @@ public class MiningThread {
                 + "    `id`\n"
                 + "FROM\n"
                 + "    `cpad_shadow`.`transaction`\n"
-                + "WHERE (`id` > ?);";
+                + "WHERE (`id` > ?) limit 100;";
         if (con != null) {
             try {
                 ps=con.prepareStatement(queryString);

@@ -3,22 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/MiningThread.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/AccessDBApplication.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/constants/Event.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/constants/Operation.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/constants/TablesOfInterest.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/NewClass.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/TransactionSet.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/MaritalStatusType.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/User.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/mappers/TransactionMapper.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/constants/Operations.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/Events.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/TransactionMiner.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/IdentifierType.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/Location.java</file>
-            <file>file:/F:/sides/AccessDBApplication/src/org/kemricdc/entities/Person.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/dao/CRUDOperations.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/mappers/TransactionMapper.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/constants/Event.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/TesterClass.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/entities/PersonIdentifier.java</file>
+            <file>file:/F:/sides/HIVCaseBasedAccessModule/src/org/kemricdc/entities/Person.java</file>
         </group>
     </open-files>
 </project-private>

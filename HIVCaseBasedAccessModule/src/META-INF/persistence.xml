@@ -3,14 +3,9 @@
   <persistence-unit name="AccessDBApplicationPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>org.kemricdc.Facility</class>
-    <class>org.kemricdc.entities.Events</class>
-    <class>org.kemricdc.entities.MaritalStatusType</class>
-    <class>org.kemricdc.entities.User</class>
-    <class>org.kemricdc.entities.PersonEvents</class>
     <class>org.kemricdc.entities.PersonIdentifier</class>
     <class>org.kemricdc.entities.Person</class>
     <class>org.kemricdc.entities.Location</class>
-    <class>org.kemricdc.entities.PatientSource</class>
     <class>org.kemricdc.entities.IdentifierType</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/casebased?zeroDateTimeBehavior=convertToNull"/>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.IdentifierType" table="identifier_type" catalog="casebased">
+        <id name="identifierTypeId" type="java.lang.Integer">
+            <column name="identifier_type_id" />
+            <generator class="identity" />
+        </id>
+        <property name="identifierTypeName" type="string">
+            <column name="identifier_type_name" length="45" />
+        </property>
+        <set name="personIdentifiers" table="person_identifier" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="identifier_type_id" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.PersonIdentifier" />
+        </set>
+    </class>
+</hibernate-mapping>

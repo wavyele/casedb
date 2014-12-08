@@ -6,72 +6,51 @@
 package org.kemricdc;
 
 import java.util.List;
-import org.kemricdc.constants.Event;
-import org.kemricdc.entities.TransactionSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.kemricdc.mappers.TransactionMapper;
+import org.kemricdc.utils.TransactionSet;
 
 /**
  *
  * @author Stanslaus Odhiambo
  */
 public class AccessDBApplication {
+    private final static TransactionMapper transactionMapper=new TransactionMapper();
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        
 
-        System.out.println(Event.valueOf("BIRTH"));
+//        System.out.println(Event.valueOf("BIRTH"));
+//        System.out.println(Event.BIRTH.getValue());
+        
 
         List<TransactionSet> sets;
 
-        MiningThread thread = new MiningThread();
-        //thread.processTransactions();
-        sets = thread.processTransactions();
-
-        for (TransactionSet set : sets) {
-            System.out.println(set);
-
+        while (true) {            
+            MiningThread thread = new MiningThread();
+            //thread.processTransactions();
+            sets = thread.processTransactions();
+            
+            for (TransactionSet set : sets) {
+                System.out.println(set);
+                transactionMapper.mapTransaction(set);
+                
+            }
+            
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+            System.out.println("\nChecking out in the next ten 30 seconds\n");
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(AccessDBApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-//        final String fileName = "C:\\\\Comprehensive Care Clinic Patient Application Database (C-PAD)\\\\CCC PATIENT APPLICATION DB30SEP13.mdb";
-//
-//        Connection con = null;
-//
-//        try {
-//
-//            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-//
-//            String url = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=" + fileName;
-//
-//            con = DriverManager.getConnection(url, "", "");
-//            if (con != null) {
-//                System.out.println("Database Connection Successfull");
-//                //String sql2 = "SELECT DISTINCT patient_id FROM tblpatient_information "
-//                //       + "WHERE patient_id IS NOT NULL";
-//                //Statement statement=con.createStatement();
-//                //  ResultSet resultSet=statement.executeQuery(sql2);
-//
-//                //while(resultSet.next()){
-//                //    System.out.printf("%s %s",resultSet.getString("patient_id"),"\n");
-//                //}
-//            } else {
-//                System.out.println("Database Connection was not established");
-//            }
-//
-//        } catch (ClassNotFoundException | SQLException e) {
-//            System.out.println(e.getMessage());
-//
-//        } finally {
-//
-//            try {
-//                if (con != null) {
-//                    con.close();
-//                }
-//            } catch (SQLException e) {
-//                System.out.println(e.getMessage());
-//            }
-//
-//        }
 
     }
 

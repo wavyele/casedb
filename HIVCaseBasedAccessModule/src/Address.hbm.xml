@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.Address" table="address" catalog="casebased">
+        <id name="addressId" type="java.lang.Integer">
+            <column name="address_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="person" class="org.kemricdc.entities.Person" fetch="select">
+            <column name="person_id" not-null="true" />
+        </many-to-one>
+        <property name="postalAddress" type="string">
+            <column name="postal_address" length="45" />
+        </property>
+        <property name="telephone" type="string">
+            <column name="telephone" length="45" />
+        </property>
+        <property name="addresscol" type="string">
+            <column name="addresscol" length="45" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.Person" table="person" catalog="casebased">
+        <id name="personId" type="java.lang.Integer">
+            <column name="person_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="maritalStatusType" class="org.kemricdc.entities.MaritalStatusType" fetch="select">
+            <column name="marital_status" not-null="true" />
+        </many-to-one>
+        <many-to-one name="patientSource" class="org.kemricdc.entities.PatientSource" fetch="select">
+            <column name="patient_source_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="location" class="org.kemricdc.entities.Location" fetch="select">
+            <column name="location_id" />
+        </many-to-one>
+        <property name="personGuid" type="string">
+            <column name="person_guid" length="45" />
+        </property>
+        <property name="firstName" type="string">
+            <column name="first_name" length="45" />
+        </property>
+        <property name="middleName" type="string">
+            <column name="middle_name" length="45" />
+        </property>
+        <property name="lastName" type="string">
+            <column name="last_name" length="45" />
+        </property>
+        <property name="sex" type="string">
+            <column name="sex" length="6" />
+        </property>
+        <property name="birthdate" type="date">
+            <column name="birthdate" length="10" />
+        </property>
+        <property name="deathdate" type="timestamp">
+            <column name="deathdate" length="19" />
+        </property>
+        <property name="dateCreated" type="timestamp">
+            <column name="date_created" length="19" />
+        </property>
+        <property name="dateModified" type="timestamp">
+            <column name="date_modified" length="19" />
+        </property>
+        <set name="personeventses" table="personevents" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="person_id" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Personevents" />
+        </set>
+        <set name="relationshipsForPersonbId" table="relationship" inverse="false" lazy="false" fetch="select">
+            <key>
+                <column name="personb_id" not-null="true">
+                    <comment>the relative</comment>
+                </column>
+            </key>
+            <one-to-many class="org.kemricdc.entities.Relationship" />
+        </set>
+        <set name="personIdentifiers" table="person_identifier" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="person_id" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.PersonIdentifier" />
+        </set>
+        <set name="relationshipsForPersonaId" table="relationship" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="persona_id" not-null="true">
+                    <comment>person of reference</comment>
+                </column>
+            </key>
+            <one-to-many class="org.kemricdc.entities.Relationship" />
+        </set>
+        <set name="addresses" table="address" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="person_id" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Address" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="org.kemricdc.entities.MaritalStatusType" table="marital_status_type" catalog="casebased">
+        <id name="maritalStatusTypeId" type="java.lang.Integer">
+            <column name="marital_status_type_id" />
+            <generator class="identity" />
+        </id>
+        <property name="maritalStatus" type="string">
+            <column name="marital_status" length="45" />
+        </property>
+        <set name="persons" table="person" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="marital_status" not-null="true" />
+            </key>
+            <one-to-many class="org.kemricdc.entities.Person" />
+        </set>
+    </class>
+</hibernate-mapping>
