@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.kemricdc.hapi;
 
 import java.util.Set;
@@ -20,28 +19,23 @@ import org.kemricdc.entities.PersonIdentifier;
  * @author Stanslaus Odhiambo
  */
 public class PersonFactory {
-    
-    private Person person=null;
-    private Set<Address> addresses=null;
-    private Set<PersonIdentifier> personIdentifiers=null;
-    private IdentifierType identifierType=null;
-    private Location location=null;
-    private MaritalStatusType maritalStatusType=null;
-    private PatientSource patientSource=null;
-    
-    
-    public PersonFactory(Person person,Set<Address> addresses,Set<PersonIdentifier> personIdentifiers,
-            IdentifierType identifierType,Location location,MaritalStatusType maritalStatusType,
-            PatientSource patientSource){
+
+    private Person person = null;
+    private Set<Address> addresses = null;
+    private Set<PersonIdentifier> personIdentifiers = null;
+    private Location location = null;
+    private MaritalStatusType maritalStatusType = null;
+    private PatientSource patientSource = null;
+
+    public PersonFactory(Person person, Set<Address> addresses, Set<PersonIdentifier> personIdentifiers,
+            Location location, MaritalStatusType maritalStatusType, PatientSource patientSource) {
         setPerson(person);
         setAddresses(addresses);
         setPersonIdentifiers(personIdentifiers);
-        setIdentifierType(identifierType);
         setLocation(location);
         setMaritalStatusType(maritalStatusType);
         setPatientSource(patientSource);
-        
-        
+
     }
 
     public Person getPerson() {
@@ -68,14 +62,6 @@ public class PersonFactory {
         this.personIdentifiers = personIdentifiers;
     }
 
-    public IdentifierType getIdentifierType() {
-        return identifierType;
-    }
-
-    private void setIdentifierType(IdentifierType identifierType) {
-        this.identifierType = identifierType;
-    }
-
     public Location getLocation() {
         return location;
     }
@@ -99,25 +85,15 @@ public class PersonFactory {
     private void setPatientSource(PatientSource patientSource) {
         this.patientSource = patientSource;
     }
-    
-    public Person buildPerson(){
+
+    public Person buildPerson() {
         person.setPersonIdentifiers(personIdentifiers);
         person.setAddresses(addresses);
         person.setLocation(location);
         person.setMaritalStatusType(maritalStatusType);
         person.setPatientSource(patientSource);
-        
-        
+
         return person;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }

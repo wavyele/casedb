@@ -35,6 +35,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kemricdc.entities.Address;
+import org.kemricdc.entities.Location;
+import org.kemricdc.entities.MaritalStatusType;
+import org.kemricdc.entities.PatientSource;
 import org.kemricdc.entities.PersonIdentifier;
 
 /**
@@ -43,23 +47,27 @@ import org.kemricdc.entities.PersonIdentifier;
  */
 public class PatientRegistration {
 
-    PersonFactory factory = new PersonFactory(new Person(), null, null, null, null, null, null);
-    Person person = factory.buildPerson();
+    PersonFactory factory;
+    Person person;
     HapiContext context = new DefaultHapiContext();
-
     Properties properties = new Properties();
+
+    public PatientRegistration(Person person, Set<Address> addresses, Set<PersonIdentifier> identifiers,
+            Location location, MaritalStatusType statusType, PatientSource patientSource) {
+
+        factory = new PersonFactory(person, addresses, identifiers, location, statusType, patientSource);
+        this.person = factory.buildPerson();
+
+    }
 
     public void processRegistration() {
         try {
             properties.load(this.getClass().getResourceAsStream("/site.properties"));
-            ADT_A01 adt = generateHL7();
             String s = generateHL7String();
-           // sendMessage(adt);
+            // sendMessage(adt);
             sendStringMessage(s);
 
-        } catch (HL7Exception ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (HL7Exception | IOException ex) {
             Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -67,8 +75,6 @@ public class PatientRegistration {
 
     private ADT_A01 generateHL7() throws HL7Exception, IOException {
 
-        person.setFirstName("John");
-        person.setLastName("Otieno");
         Set<PersonIdentifier> identifiers = new HashSet<>();
         PersonIdentifier pi = new PersonIdentifier();
         pi.setIdentifier("1234567");
@@ -79,8 +85,8 @@ public class PatientRegistration {
 
         // Populate the MSH Segment
         MSH mshSegment = adt_a01.getMSH();
-        mshSegment.getSendingApplication().getNamespaceID().setValue(properties.getProperty("sending_application"));
-        mshSegment.getSendingFacility().getNamespaceID().setValue(properties.getProperty("sending_facility"));
+        mshSegment.getSendingApplication().getNamespaceID().setValue(properties.getProperty("application_name"));
+        mshSegment.getSendingFacility().getNamespaceID().setValue(properties.getProperty("facility_name"));
         mshSegment.getSequenceNumber().setValue(properties.getProperty("sequence_number"));
 
         // Populate the PID Segment
@@ -95,8 +101,8 @@ public class PatientRegistration {
         //  encoding the message and look at the output
         Parser parser = context.getPipeParser();
         String encodedMessage = parser.encode(adt_a01);
-        System.out.println("Printing ER7 Encoded Message:");
-        System.out.println(encodedMessage);
+        System.out.println("\nPrinting ER7 Encoded Message:");
+        System.out.println("\n" + encodedMessage);
 
 //        // Next, let's use the XML parser to encode as XML
 //        parser = context.getXMLParser();
@@ -108,8 +114,6 @@ public class PatientRegistration {
 
     private String generateHL7String() throws HL7Exception, IOException {
 
-        person.setFirstName("John");
-        person.setLastName("Otieno");
         Set<PersonIdentifier> identifiers = new HashSet<>();
         PersonIdentifier pi = new PersonIdentifier();
         pi.setIdentifier("1234567");
@@ -134,24 +138,18 @@ public class PatientRegistration {
          * Populate more fields and Segments
          */
         //  encoding the message and look at the output
-        HapiContext context = new DefaultHapiContext();
-        
-        
         //First, lets use the XML Parser to encode XML
         Parser parser = context.getXMLParser();
         String encodedMessage = parser.encode(adt_a01);
-        System.out.println("Printing XML Encoded Message:");
-        System.out.println(encodedMessage);
-         
+        System.out.println("\nPrinting XML Encoded Message:");
+        System.out.println("\n" + encodedMessage);
 
         // Next, let's use the ER7 parser to encode as ER7
         parser = context.getPipeParser();
         encodedMessage = parser.encode(adt_a01);
-        System.out.println("Printing ER7 Encoded Message:");
-        System.out.println(encodedMessage);
-        
-        
-        
+        System.out.println("\nPrinting ER7 Encoded Message:");
+        System.out.println("\n" + encodedMessage);
+
         return encodedMessage;
     }
 
@@ -174,11 +172,11 @@ public class PatientRegistration {
 
             // receivavle.getRawMessage() provides the response
             Message message = receivable.getMessage();
-            System.out.println("Response was:\n" + message.encode());
+            System.out.println("\nResponse was:\n" + message.encode());
 
             // IReceivable also stores metadata about the message
             String remoteHostIp = (String) receivable.getMetadata().get(MessageMetadataKeys.REMOTE_HOST_ADDRESS);
-            System.out.println("From:\n" + remoteHostIp);
+            System.out.println("\nFrom:\n" + remoteHostIp);
 
             /*
              * Note that the client may be reused as many times as you like,
@@ -196,26 +194,31 @@ public class PatientRegistration {
         int port = Integer.parseInt(properties.getProperty("port"));
         boolean useTLS = Boolean.parseBoolean(properties.getProperty("useTLS"));
         Parser p = context.getPipeParser();
+        Connection connection = null;
+        Initiator initiator;
+        Message response;
         try {
             Message adt = p.parse(s);
             // A connection object represents a socket attached to an HL7 server
-            Connection connection = context.newClient(host, port, useTLS);
+            connection = context.newClient(host, port, useTLS);
             // The initiator is used to transmit unsolicited messages
-            Initiator initiator = connection.getInitiator();
-            Message response = initiator.sendAndReceive(adt);
+            initiator = connection.getInitiator();
+             response= initiator.sendAndReceive(adt);
 
             String responseString = p.encode(response);
-            System.out.println("Received response:\n" + responseString);
-        } catch (HL7Exception ex) {
+            System.out.println("\n\nReceived response:\n" + responseString);
+        } catch (HL7Exception | LLPException | IOException ex) {
             Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (LLPException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (connection != null) {
+                connection.close();
+                
+            }
+
         }
     }
 
-    public void sendOverTCP(ADT_A01 adt_a01) {
+    public void sendOverTCPs(ADT_A01 adt_a01) {
         String host = properties.getProperty("host");
         int port = Integer.parseInt(properties.getProperty("port"));
         boolean useTLS = Boolean.parseBoolean(properties.getProperty("useTLS"));
