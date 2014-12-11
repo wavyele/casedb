@@ -11,7 +11,6 @@ import org.kemricdc.entities.Address;
 import org.kemricdc.entities.Location;
 import org.kemricdc.entities.PatientSource;
 import org.kemricdc.entities.Person;
-import org.kemricdc.entities.PersonIdentifier;
 
 /**
  *
@@ -21,7 +20,6 @@ public class PersonFactory {
 
     private Person person = null;
     private Set<Address> addresses = null;
-    private Set<PersonIdentifier> personIdentifiers = null;
     private Location location = null;
     private MaritalStatusTypeName maritalStatusType = null;
     private PatientSource patientSource = null;
@@ -30,7 +28,6 @@ public class PersonFactory {
             Location location, PatientSource patientSource) {
         setPerson(person);
         setAddresses(addresses);
-        setPersonIdentifiers(personIdentifiers);
         setLocation(location);
         setMaritalStatusType(maritalStatusType);
         setPatientSource(patientSource);
@@ -51,14 +48,6 @@ public class PersonFactory {
 
     private void setAddresses(Set<Address> addresses) {
         this.addresses = addresses;
-    }
-
-    public Set<PersonIdentifier> getPersonIdentifiers() {
-        return personIdentifiers;
-    }
-
-    private void setPersonIdentifiers(Set<PersonIdentifier> personIdentifiers) {
-        this.personIdentifiers = personIdentifiers;
     }
 
     public Location getLocation() {
@@ -86,10 +75,8 @@ public class PersonFactory {
     }
 
     public Person buildPerson() {
-        person.setPersonIdentifiers(personIdentifiers);
         person.setAddresses(addresses);
         person.setLocation(location);
-//        person.setMaritalStatusType(maritalStatusType);
         person.setPatientSource(patientSource);
 
         return person;

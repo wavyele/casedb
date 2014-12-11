@@ -81,7 +81,8 @@ public class HapiModuleV1 {
         List<OruFiller> fillers = new ArrayList<>();
         ProcessTransactions bXSegment = new ProcessTransactions(p,fillers);        
         String bXString = bXSegment.generateORU();
-        SendHL7String.sendStringMessage(bXString);
+        new SendHL7String().sendStringMessage(bXString);
+        
     }
 
 }

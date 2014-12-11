@@ -70,7 +70,7 @@ public class PatientRegistration {
             String s = generateHL7String();
             // sendMessage(adt);
             
-            SendHL7String.sendStringMessage(s);
+            new SendHL7String().sendStringMessage(s);
 
         } catch (HL7Exception | IOException ex) {
             Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);

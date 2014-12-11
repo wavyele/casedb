@@ -25,12 +25,23 @@ import org.kemricdc.hapi.adt.PatientRegistration;
  * @author Stanslaus Odhiambo
  */
 public class SendHL7String {
-    private static final Properties properties = new Properties();
-    private static final HapiContext context = new DefaultHapiContext();
+    private final Properties properties = new Properties();
+    private final HapiContext context = new DefaultHapiContext();
     
-    public static void sendStringMessage(String s) {
+    public SendHL7String(){
+        try {
+            properties.load(this.getClass().getResourceAsStream("/site.properties"));
+        } catch (IOException ex) {
+            Logger.getLogger(SendHL7String.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void sendStringMessage(String s) {
+        
         String host = properties.getProperty("host");
+        System.out.println("The port number is: " +properties.getProperty("host"));
         int port = Integer.parseInt(properties.getProperty("port"));
+        System.out.println(port);
         boolean useTLS = Boolean.parseBoolean(properties.getProperty("useTLS"));
         Parser p = context.getPipeParser();
         Connection connection = null;
