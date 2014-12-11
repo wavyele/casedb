@@ -1,6 +1,9 @@
 package org.kemricdc.entities;
 // Generated Nov 28, 2014 11:52:32 AM by Hibernate Tools 3.6.0
 
+import org.kemricdc.constants.IdentifierTypeName;
+
+
 
 
 /**
@@ -10,7 +13,7 @@ public class PersonIdentifier  implements java.io.Serializable {
 
 
      private Integer personIdentifierId;
-     private IdentifierType identifierType;
+     private IdentifierTypeName identifierType;
      private Person person;
      private String identifier;
 
@@ -18,11 +21,11 @@ public class PersonIdentifier  implements java.io.Serializable {
     }
 
 	
-    public PersonIdentifier(IdentifierType identifierType, Person person) {
+    public PersonIdentifier(IdentifierTypeName identifierType, Person person) {
         this.identifierType = identifierType;
         this.person = person;
     }
-    public PersonIdentifier(IdentifierType identifierType, Person person, String identifier) {
+    public PersonIdentifier(IdentifierTypeName identifierType, Person person, String identifier) {
        this.identifierType = identifierType;
        this.person = person;
        this.identifier = identifier;
@@ -35,11 +38,11 @@ public class PersonIdentifier  implements java.io.Serializable {
     public void setPersonIdentifierId(Integer personIdentifierId) {
         this.personIdentifierId = personIdentifierId;
     }
-    public IdentifierType getIdentifierType() {
+    public IdentifierTypeName getIdentifierType() {
         return this.identifierType;
     }
     
-    public void setIdentifierType(IdentifierType identifierType) {
+    public void setIdentifierType(IdentifierTypeName identifierType) {
         this.identifierType = identifierType;
     }
     public Person getPerson() {

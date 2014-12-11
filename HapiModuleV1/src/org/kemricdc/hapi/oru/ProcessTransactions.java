@@ -44,10 +44,12 @@ import org.kemricdc.entities.PersonIdentifier;
 public class ProcessTransactions {
 
     private final Properties properties = new Properties();
+    List<OruFiller> fillers;
     private final Person person;
 
-    public ProcessTransactions(Person person) {
+    public ProcessTransactions(Person person,List<OruFiller> fillers) {
         this.person = person;
+        this.fillers=fillers;
 
     }
 
@@ -106,12 +108,11 @@ public class ProcessTransactions {
      *                     ORDER_OBSERVATION end
      * </code>
      *
-     * @param fillers set of values to be fed into the BX Segments
      * @return the encoded ORU^R01 message
      * @throws HL7Exception If any processing problem occurs
      * @throws IOException
      */
-    public String generateORU(List<OruFiller> fillers) throws HL7Exception, IOException {
+    public String generateORU() throws HL7Exception, IOException {
         properties.load(this.getClass().getResourceAsStream("/site.properties"));
 
         // First, a message object is constructed
@@ -133,6 +134,8 @@ public class ProcessTransactions {
         msh.getReceivingApplication().getNamespaceID().setValue(properties.getProperty("cds_name"));
         msh.getReceivingFacility().getNamespaceID().setValue(properties.getProperty("cdsapplication_name"));
         msh.getSequenceNumber().setValue("123");
+        
+        
 
         ORU_R01_PATIENT oruPatient = message.getPATIENT_RESULT().getPATIENT();
         PID pid = oruPatient.getPID();
@@ -140,14 +143,15 @@ public class ProcessTransactions {
         pid.getPatientName(0).getFamilyName().getSurname().setValue(person.getLastName());
         pid.getPatientName(0).getGivenName().setValue(person.getFirstName());
         pid.getAdministrativeSex().setValue(person.getSex());
-//        pid.getMaritalStatus().getText().setValue(person.getMaritalStatusType().getMaritalStatus());
-//        THis line throwing some error that is yet to be figured out -  hint could be on the encoding and the data types thing
-
+        pid.getMaritalStatus().getCe1_Identifier().setValue(person.getMaritalStatusType().getValue());
+       
+        
         //Changed to the below to handle scenario where the patient has more than one identifier
         Set<PersonIdentifier> identifiers = person.getPersonIdentifiers();
         int count = 0;
         for (PersonIdentifier personIdentifier : identifiers) {
             pid.getPatientIdentifierList(count).getID().setValue(personIdentifier.getIdentifier());
+            pid.getPatientIdentifierList(count).getIdentifierTypeCode().setValue(personIdentifier.getIdentifierType().getValue());
             count++;
         }
         //pid.getPatientIdentifierList(0).getID().setValue("123456");
@@ -182,7 +186,9 @@ public class ProcessTransactions {
 
             // Populate the OBXs
             obx = orderObservation.getOBSERVATION(i).getOBX();
-            obx.getObservationIdentifier().getIdentifier().setValue(properties.getProperty("facility_mfl_code"));
+            ST observationIdentifier = obx.getObservationIdentifier().getIdentifier();
+            observationIdentifier.setValue(properties.getProperty("facility_mfl_code"));
+//            obx.getObservationIdentifier().getIdentifier().setValue(properties.getProperty("facility_mfl_code"));
             obx.getObservationSubId().setValue(properties.getProperty("application_code"));
             switch (oruFiller.getValueType()) {
                 case CE: {
@@ -201,8 +207,8 @@ public class ProcessTransactions {
                     // OBX-3-1. This component is actually an ST, but the HL7 specification allows
                     // extra subcomponents to be tacked on to the end of a component. This is
                     // uncommon, but HAPI nontheless allows it.
-                    ST observationIdentifier = obx.getObservationIdentifier().getIdentifier();
-                    observationIdentifier.setValue("88304");
+//                    Already set the value up above
+//                    observationIdentifier.setValue("88304");
                     ST extraSubcomponent = new ST(message);
                     extraSubcomponent.setValue("MDT");
                     observationIdentifier.getExtraComponents().getComponent(0).setData(extraSubcomponent);
@@ -212,7 +218,7 @@ public class ProcessTransactions {
 
                     // ... then we create a TX instance to put in OBX-5.
                     TX tx = new TX(message);
-                    tx.setValue("MICROSCOPIC EXAM SHOWS HISTOLOGICALLY NORMAL GALLBLADDER TISSUE");
+                    tx.setValue(oruFiller.getTxValue());
 
                     value = obx.getObservationValue(0);
                     value.setData(tx);
@@ -222,30 +228,6 @@ public class ProcessTransactions {
             }
 
         }
-
-        // Now we populate the second OBX - This is now handled by the loop
-        //obx = orderObservation.getOBSERVATION(1).getOBX();
-        //obx.getSetIDOBX().setValue("2");
-        
-        
-        //try out setting the third obx - sorted by the loop
-//        obx = orderObservation.getOBSERVATION(2).getOBX();
-//        obx.getSetIDOBX().setValue("3");
-//        obx.getObservationSubId().setValue("1");
-//        observationIdentifier = obx.getObservationIdentifier().getIdentifier();
-//        observationIdentifier.setValue("88304");
-//        extraSubcomponent = new ST(message);
-//        extraSubcomponent.setValue("MDT");
-//        observationIdentifier.getExtraComponents().getComponent(0).setData(extraSubcomponent);
-//
-//        // The first OBX has a value type of TX. So first, we populate OBX-2 with "TX"...
-//        obx.getValueType().setValue("TX");
-//
-//        // ... then we create a TX instance to put in OBX-5.
-//        tx = new TX(message);
-//        tx.setValue("This is another one");
-//        value = obx.getObservationValue(0);
-//        value.setData(tx);
 
         // Print the message (remember, the MSH segment was not fully or correctly populated)
         String finalString = message.encode();

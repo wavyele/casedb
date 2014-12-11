@@ -30,16 +30,20 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kemricdc.entities.Address;
+import org.kemricdc.constants.IdentifierTypeName;
+import org.kemricdc.constants.MaritalStatusTypeName;
 import org.kemricdc.entities.Location;
 import org.kemricdc.entities.MaritalStatusType;
 import org.kemricdc.entities.PatientSource;
 import org.kemricdc.entities.PersonIdentifier;
+import org.kemricdc.hapi.SendHL7String;
 
 /**
  *
@@ -52,10 +56,10 @@ public class PatientRegistration {
     HapiContext context = new DefaultHapiContext();
     Properties properties = new Properties();
 
-    public PatientRegistration(Person person, Set<Address> addresses, Set<PersonIdentifier> identifiers,
-            Location location, MaritalStatusType statusType, PatientSource patientSource) {
+    public PatientRegistration(Person person, Set<Address> addresses, Location location,
+            PatientSource patientSource) {
 
-        factory = new PersonFactory(person, addresses, identifiers, location, statusType, patientSource);
+        factory = new PersonFactory(person, addresses, location, patientSource);
         this.person = factory.buildPerson();
 
     }
@@ -65,7 +69,8 @@ public class PatientRegistration {
             properties.load(this.getClass().getResourceAsStream("/site.properties"));
             String s = generateHL7String();
             // sendMessage(adt);
-            sendStringMessage(s);
+            
+            SendHL7String.sendStringMessage(s);
 
         } catch (HL7Exception | IOException ex) {
             Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,6 +85,8 @@ public class PatientRegistration {
         pi.setIdentifier("1234567");
         identifiers.add(pi);
         person.setPersonIdentifiers(identifiers);
+        person.setBirthdate(new Date());
+
         ADT_A01 adt_a01 = new ADT_A01();
         adt_a01.initQuickstart("ADT", "A04", "T");
 
@@ -94,6 +101,9 @@ public class PatientRegistration {
         pid.getPatientName(0).getFamilyName().getSurname().setValue(person.getLastName());
         pid.getPatientName(0).getGivenName().setValue(person.getFirstName());
         pid.getPatientIdentifierList(0).getID().setValue(((PersonIdentifier) person.getPersonIdentifiers().iterator().next()).getIdentifier());
+        pid.getAdministrativeSex().setValue(person.getSex());
+        pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(person.getBirthdate());
+        pid.getMaritalStatus().getText().setValue(person.getMaritalStatusType().getValue());
 
         /*
          * Populate more fields and Segments
@@ -114,11 +124,6 @@ public class PatientRegistration {
 
     private String generateHL7String() throws HL7Exception, IOException {
 
-        Set<PersonIdentifier> identifiers = new HashSet<>();
-        PersonIdentifier pi = new PersonIdentifier();
-        pi.setIdentifier("1234567");
-        identifiers.add(pi);
-        person.setPersonIdentifiers(identifiers);
         ADT_A01 adt_a01 = new ADT_A01();
         adt_a01.initQuickstart("ADT", "A04", "T");
 
@@ -132,7 +137,18 @@ public class PatientRegistration {
         PID pid = adt_a01.getPID();
         pid.getPatientName(0).getFamilyName().getSurname().setValue(person.getLastName());
         pid.getPatientName(0).getGivenName().setValue(person.getFirstName());
-        pid.getPatientIdentifierList(0).getID().setValue(((PersonIdentifier) person.getPersonIdentifiers().iterator().next()).getIdentifier());
+        int count = 0;
+        Set<PersonIdentifier> identifiers = person.getPersonIdentifiers();
+
+        for (PersonIdentifier personIdentifier : identifiers) {
+            pid.getPatientIdentifierList(count).getID().setValue(personIdentifier.getIdentifier());
+            pid.getPatientIdentifierList(count).getIdentifierTypeCode().setValue(personIdentifier.getIdentifierType().getValue());
+            count++;
+        }
+        pid.getAdministrativeSex().setValue(person.getSex());
+        pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(person.getBirthdate());
+        pid.getMaritalStatus().getCe1_Identifier().setValue(person.getMaritalStatusType().getValue());
+//        pid.getMaritalStatus().getText().setValue(person.getMaritalStatusType().getValue());
 
         /*
          * Populate more fields and Segments
@@ -153,6 +169,10 @@ public class PatientRegistration {
         return encodedMessage;
     }
 
+    /**
+     * Sends an ADT_A01 message via http to the receiving application
+     * @param adt The message to be sent out
+     */
     public void sendMessage(ADT_A01 adt) {
         String host = properties.getProperty("host");
         int port = Integer.parseInt(properties.getProperty("port"));
@@ -189,34 +209,12 @@ public class PatientRegistration {
 
     }
 
-    public void sendStringMessage(String s) {
-        String host = properties.getProperty("host");
-        int port = Integer.parseInt(properties.getProperty("port"));
-        boolean useTLS = Boolean.parseBoolean(properties.getProperty("useTLS"));
-        Parser p = context.getPipeParser();
-        Connection connection = null;
-        Initiator initiator;
-        Message response;
-        try {
-            Message adt = p.parse(s);
-            // A connection object represents a socket attached to an HL7 server
-            connection = context.newClient(host, port, useTLS);
-            // The initiator is used to transmit unsolicited messages
-            initiator = connection.getInitiator();
-             response= initiator.sendAndReceive(adt);
-
-            String responseString = p.encode(response);
-            System.out.println("\n\nReceived response:\n" + responseString);
-        } catch (HL7Exception | LLPException | IOException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                connection.close();
-                
-            }
-
-        }
-    }
+    /**
+     * Method to sent the "Stringified" message of any type to the host and port 
+     * specified in the properties file
+     * @param s  HL7 string version to be sent
+     */
+    
 
     public void sendOverTCPs(ADT_A01 adt_a01) {
         String host = properties.getProperty("host");

@@ -8,8 +8,15 @@ package org.kemricdc;
 import ca.uhn.hl7v2.HL7Exception;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.kemricdc.constants.IdentifierTypeName;
+import org.kemricdc.constants.MaritalStatusTypeName;
 import org.kemricdc.entities.Person;
+import org.kemricdc.entities.PersonIdentifier;
+import org.kemricdc.hapi.SendHL7String;
 import org.kemricdc.hapi.adt.PatientRegistration;
 import org.kemricdc.hapi.oru.OruFiller;
 import org.kemricdc.hapi.oru.ProcessTransactions;
@@ -29,32 +36,52 @@ public class HapiModuleV1 {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws HL7Exception, IOException {
+        
+        //Set up the person
 
         Person p = new Person();
         p.setFirstName("stanslaus");
         p.setLastName("Odhiambo");
         p.setSex("male");
-        // TODO code application logic here
+        p.setMaritalStatusType(MaritalStatusTypeName.SEPARATED);
+        
+        
+        //Set 3 identifiers
+        Set<PersonIdentifier> identifiers = new HashSet<>();
+        PersonIdentifier pi = new PersonIdentifier();
+        pi.setIdentifier("123456");
+        pi.setIdentifierType(IdentifierTypeName.CCC_NUMBER);
+        identifiers.add(pi);
+
+        pi = new PersonIdentifier();
+        pi.setIdentifier("44444");
+        pi.setIdentifierType(IdentifierTypeName.HEI_NUMBER);
+        identifiers.add(pi);
+
+        pi = new PersonIdentifier();
+        pi.setIdentifier("888888");
+        pi.setIdentifierType(IdentifierTypeName.NATIONAL_ID);
+        identifiers.add(pi);
+        
+        //Add identifiers to the set
+        p.setPersonIdentifiers(identifiers);
+        
+        //set the birth date
+        p.setBirthdate(new Date());
 
         //Leave this error for the time..reminds me of what is to be done.
         //No use of null values
-        PatientRegistration patientRegistration = new PatientRegistration(p, null, null, null, null, null);
+        PatientRegistration patientRegistration = new PatientRegistration(p, null, null, null);
         patientRegistration.processRegistration();
 
         
         
         System.err.println("\n\nThe transaction phase\n\n");
 //        Ensure person fields populated before passing to the constructor
-        ProcessTransactions bXSegment = new ProcessTransactions(p);
-
-//        Person p=new Person();
-//        p.setFirstName("Demo First Name");
-//        p.setLastName("DemoLastName");
-//        p.setBirthdate(new Date());
-//        p.setSex("male");
         List<OruFiller> fillers = new ArrayList<>();
-        String bXString = bXSegment.generateORU(fillers);
-        patientRegistration.sendStringMessage(bXString);
+        ProcessTransactions bXSegment = new ProcessTransactions(p,fillers);        
+        String bXString = bXSegment.generateORU();
+        SendHL7String.sendStringMessage(bXString);
     }
 
 }
