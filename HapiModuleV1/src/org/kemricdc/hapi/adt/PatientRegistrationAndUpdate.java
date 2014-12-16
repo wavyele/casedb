@@ -10,9 +10,7 @@ import org.kemricdc.hapi.PersonFactory;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.HL7Service;
-import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.examples.ExampleReceiverApplication;
 import ca.uhn.hl7v2.hoh.api.DecodeException;
 import ca.uhn.hl7v2.hoh.api.EncodeException;
@@ -21,7 +19,6 @@ import ca.uhn.hl7v2.hoh.api.ISendable;
 import ca.uhn.hl7v2.hoh.api.MessageMetadataKeys;
 import ca.uhn.hl7v2.hoh.hapi.api.MessageSendable;
 import ca.uhn.hl7v2.hoh.hapi.client.HohClientSimple;
-import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.*;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
@@ -37,10 +34,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kemricdc.entities.Address;
-import org.kemricdc.constants.IdentifierTypeName;
-import org.kemricdc.constants.MaritalStatusTypeName;
 import org.kemricdc.entities.Location;
-import org.kemricdc.entities.MaritalStatusType;
 import org.kemricdc.entities.PatientSource;
 import org.kemricdc.entities.PersonIdentifier;
 import org.kemricdc.hapi.SendHL7String;
@@ -49,14 +43,14 @@ import org.kemricdc.hapi.SendHL7String;
  *
  * @author Stanslaus Odhiambo
  */
-public class PatientRegistration {
+public class PatientRegistrationAndUpdate {
 
     PersonFactory factory;
     Person person;
     HapiContext context = new DefaultHapiContext();
     Properties properties = new Properties();
 
-    public PatientRegistration(Person person, Set<Address> addresses, Location location,
+    public PatientRegistrationAndUpdate(Person person, Set<Address> addresses, Location location,
             PatientSource patientSource) {
 
         factory = new PersonFactory(person, addresses, location, patientSource);
@@ -64,21 +58,21 @@ public class PatientRegistration {
 
     }
 
-    public void processRegistration() {
+    public void processRegistrationOrUpdate(String triggerEvent) {
         try {
             properties.load(this.getClass().getResourceAsStream("/site.properties"));
-            String s = generateHL7String();
+            String s = generateHL7String(triggerEvent);
             // sendMessage(adt);
             
             new SendHL7String().sendStringMessage(s);
 
         } catch (HL7Exception | IOException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientRegistrationAndUpdate.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private ADT_A01 generateHL7() throws HL7Exception, IOException {
+    private ADT_A01 generateHL7(String triggerEvent) throws HL7Exception, IOException {
 
         Set<PersonIdentifier> identifiers = new HashSet<>();
         PersonIdentifier pi = new PersonIdentifier();
@@ -122,16 +116,18 @@ public class PatientRegistration {
         return adt_a01;
     }
 
-    private String generateHL7String() throws HL7Exception, IOException {
+    private String generateHL7String(String triggerEvent) throws HL7Exception, IOException {
 
         ADT_A01 adt_a01 = new ADT_A01();
-        adt_a01.initQuickstart("ADT", "A04", "T");
+        adt_a01.initQuickstart("ADT", triggerEvent, "T");
+        
 
         // Populate the MSH Segment
         MSH mshSegment = adt_a01.getMSH();
         mshSegment.getSendingApplication().getNamespaceID().setValue(properties.getProperty("sending_application"));
         mshSegment.getSendingFacility().getNamespaceID().setValue(properties.getProperty("sending_facility"));
         mshSegment.getSequenceNumber().setValue(properties.getProperty("sequence_number"));
+        mshSegment.getMessageType().getMessageStructure().setValue("ADT_"+triggerEvent);
 
         // Populate the PID Segment
         PID pid = adt_a01.getPID();
@@ -204,7 +200,7 @@ public class PatientRegistration {
              */
         } catch (DecodeException | EncodeException | HL7Exception | IOException e) {
             // Thrown if the response can't be read
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(PatientRegistrationAndUpdate.class.getName()).log(Level.SEVERE, null, e);
         }
 
     }
@@ -244,7 +240,7 @@ public class PatientRegistration {
             // Start the server listening for messages
             server.startAndWait();
         } catch (InterruptedException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientRegistrationAndUpdate.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kemricdc.hapi.adt.PatientRegistration;
+import org.kemricdc.hapi.adt.PatientRegistrationAndUpdate;
 
 /**
  *
@@ -58,7 +58,7 @@ public class SendHL7String {
             String responseString = p.encode(response);
             System.out.println("\n\nReceived response:\n" + responseString);
         } catch (HL7Exception | LLPException | IOException ex) {
-            Logger.getLogger(PatientRegistration.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientRegistrationAndUpdate.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (connection != null) {
                 connection.close();

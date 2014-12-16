@@ -20,6 +20,7 @@ import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.OBR;
 import ca.uhn.hl7v2.model.v24.segment.OBX;
 import ca.uhn.hl7v2.model.v24.segment.PID;
+import ca.uhn.hl7v2.model.v25.datatype.NM;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -186,46 +187,109 @@ public class ProcessTransactions {
 
             // Populate the OBXs
             obx = orderObservation.getOBSERVATION(i).getOBX();
-            ST observationIdentifier = obx.getObservationIdentifier().getIdentifier();
-            observationIdentifier.setValue(properties.getProperty("facility_mfl_code"));
-//            obx.getObservationIdentifier().getIdentifier().setValue(properties.getProperty("facility_mfl_code"));
-            obx.getObservationSubId().setValue(properties.getProperty("application_code"));
-            switch (oruFiller.getValueType()) {
-                case CE: {
-                    // The OBX has a value type of CE. So first, we populate OBX-2 with "CE"...
-                    obx.getValueType().setValue("CE");
-                    // ... then we create a CE instance to put in OBX-5.
-                    CE ce = new CE(message);
-                    ce.getNameOfCodingSystem().setValue(properties.getProperty("coding_system"));
-                    value = obx.getObservationValue(0);
-                    populateCeObx(obx, ce, (i + 1) + "", oruFiller.getIdentifier(), oruFiller.getSubId(), oruFiller.getCeValue());
-                    value.setData(ce);
-                    break;
-                }
-                case TX: {
-                            // The second OBX in the sample message has an extra subcomponent at
-                    // OBX-3-1. This component is actually an ST, but the HL7 specification allows
-                    // extra subcomponents to be tacked on to the end of a component. This is
-                    // uncommon, but HAPI nontheless allows it.
-//                    Already set the value up above
-//                    observationIdentifier.setValue("88304");
-                    ST extraSubcomponent = new ST(message);
-                    extraSubcomponent.setValue("MDT");
-                    observationIdentifier.getExtraComponents().getComponent(0).setData(extraSubcomponent);
-
-                    // The first OBX has a value type of TX. So first, we populate OBX-2 with "TX"...
-                    obx.getValueType().setValue("TX");
-
-                    // ... then we create a TX instance to put in OBX-5.
-                    TX tx = new TX(message);
-                    tx.setValue(oruFiller.getTxValue());
-
-                    value = obx.getObservationValue(0);
-                    value.setData(tx);
-
-                    break;
-                }
-            }
+            obx.getSetIDOBX().setValue(properties.getProperty("obr_id"));
+            
+            
+            //We are working with a fixed value of ST  - pretty much works for us
+            obx.getValueType().setValue("ST");
+            
+            //Form the Observation Identifier
+            obx.getObservationIdentifier().getIdentifier().setValue(oruFiller.getObservationIdentifier());
+            obx.getObservationIdentifier().getText().setValue(oruFiller.getObservationIdentifierText());
+            obx.getObservationIdentifier().getNameOfCodingSystem().setValue(oruFiller.getCodingSystem());
+            
+            
+            //Form the Observation Sub-ID if necessary
+            obx.getObservationSubId().setValue(oruFiller.getObservationSubId());
+            
+            //Form the Observation Value
+            NM nm=new NM(message);
+            nm.setValue(oruFiller.getObservationValue());
+            value = obx.getObservationValue(0);
+            value.setData(nm);
+            
+            //Form the Units
+            obx.getUnits().getText().setValue(oruFiller.getUnits());
+            
+            //Form References Range
+            obx.getReferencesRange().setValue(oruFiller.getReferencesRange());
+            
+            //Form the Abnormal Flags
+            obx.getAbnormalFlags().setValue(oruFiller.getAbnormalFlags());
+            
+            //Form the Probability
+            obx.getProbability(0).setValue(oruFiller.getProbability());
+            
+            //Form Nature of Abnormal Test
+            obx.getNatureOfAbnormalTest().setValue(oruFiller.getNatureOfAbnormalTest());
+            
+            //Form Result Status
+            obx.getObservationResultStatus().setValue(oruFiller.getResultStatus());
+            
+            //Form the Date of Last Normal Values
+            obx.getDateLastObservationNormalValue().getTimeOfAnEvent().setValue(oruFiller.getDateOfLastNormalValue());
+            
+            //set the User Defined Access Checks if necessary
+            obx.getUserDefinedAccessChecks().setValue(oruFiller.getUserDefinedAccessChecks());
+            
+            //set Date/Time of the Observation
+            obx.getDateTimeOfTheObservation().getTimeOfAnEvent().setValue(oruFiller.getDateTimeOfObservation());
+            
+            
+            //set the Producer's ID
+            obx.getProducerSID().getText().setValue(oruFiller.getProducerId());
+            
+            //form the Responsible Observer
+            obx.getResponsibleObserver().getIDNumber().setValue(oruFiller.getResponsibleObserverId());
+            obx.getResponsibleObserver().getGivenName().setValue(oruFiller.getResponsibleObserverGivenName());
+            
+            //Form the Observation Method
+            obx.getObservationMethod(0).getText().setValue(oruFiller.getObservationMethod());
+            
+            
+            
+//            
+//            
+//            ST observationIdentifier = obx.getObservationIdentifier().getIdentifier();
+//            observationIdentifier.setValue(properties.getProperty("facility_mfl_code"));
+////            obx.getObservationIdentifier().getIdentifier().setValue(properties.getProperty("facility_mfl_code"));
+//            obx.getObservationSubId().setValue(properties.getProperty("application_code"));
+//            switch (oruFiller.getValueType()) {
+//                case CE: {
+//                    // The OBX has a value type of CE. So first, we populate OBX-2 with "CE"...
+//                    obx.getValueType().setValue("CE");
+//                    // ... then we create a CE instance to put in OBX-5.
+//                    CE ce = new CE(message);
+//                    ce.getNameOfCodingSystem().setValue(properties.getProperty("coding_system"));
+//                    value = obx.getObservationValue(0);
+//                    populateCeObx(obx, ce, (i + 1) + "", oruFiller.getIdentifier(), oruFiller.getSubId(), oruFiller.getCeValue());
+//                    value.setData(ce);
+//                    break;
+//                }
+//                case TX: {
+//                            // The second OBX in the sample message has an extra subcomponent at
+//                    // OBX-3-1. This component is actually an ST, but the HL7 specification allows
+//                    // extra subcomponents to be tacked on to the end of a component. This is
+//                    // uncommon, but HAPI nontheless allows it.
+////                    Already set the value up above
+////                    observationIdentifier.setValue("88304");
+//                    ST extraSubcomponent = new ST(message);
+//                    extraSubcomponent.setValue("MDT");
+//                    observationIdentifier.getExtraComponents().getComponent(0).setData(extraSubcomponent);
+//
+//                    // The first OBX has a value type of TX. So first, we populate OBX-2 with "TX"...
+//                    obx.getValueType().setValue("TX");
+//
+//                    // ... then we create a TX instance to put in OBX-5.
+//                    TX tx = new TX(message);
+//                    tx.setValue(oruFiller.getTxValue());
+//
+//                    value = obx.getObservationValue(0);
+//                    value.setData(tx);
+//
+//                    break;
+//                }
+//            }
 
         }
 
