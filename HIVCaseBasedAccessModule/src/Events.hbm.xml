@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.Events" table="events">
+    <id name="idevent" type="java.lang.Integer">
+      <column name="idevent"/>
+      <generator class="identity"/>
+    </id>
+    <property name="name" type="string">
+      <column length="45" name="name"/>
+    </property>
+    <property name="eventDatatype" type="string">
+      <column length="45" name="event_datatype"/>
+    </property>
+    <property name="singletonEvent" type="java.lang.Boolean">
+      <column name="singleton_event"/>
+    </property>
+    <property name="minValue" type="string">
+      <column length="45" name="min_value"/>
+    </property>
+    <property name="maxValue" type="string">
+      <column length="45" name="max_value"/>
+    </property>
+    <property name="description" type="string">
+      <column name="description"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="false" name="personeventses" table="personevents">
+      <key>
+        <column name="event_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.Personevents"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="false" name="eventValueses" table="event_values">
+      <key>
+        <column name="events_idevent" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.EventValues"/>
+    </set>
+    <set fetch="select" inverse="false" lazy="false" name="surveillances" table="surveillance_has_event">
+      <key>
+        <column name="event_id" not-null="true"/>
+      </key>
+      <many-to-many entity-name="org.icap.entities.Surveillance">
+        <column name="surveillance_ids" not-null="true"/>
+      </many-to-many>
+    </set>
+  </class>
+</hibernate-mapping>

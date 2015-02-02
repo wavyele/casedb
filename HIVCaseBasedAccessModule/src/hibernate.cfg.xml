@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/casebased?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">2806</property>
+    <mapping resource="Person.hbm.xml"/>
+    <mapping resource="Facility.hbm.xml"/>
+    <mapping resource="MaritalStatusType.hbm.xml"/>
+    <mapping resource="BirthMetadata.hbm.xml"/>
+    <mapping resource="IdentifierType.hbm.xml"/>
+    <mapping resource="Relationship.hbm.xml"/>
+    <mapping resource="EventValues.hbm.xml"/>
+    <mapping resource="PatientSource.hbm.xml"/>
+    <mapping resource="Location.hbm.xml"/>
+    <mapping resource="PersonIdentifier.hbm.xml"/>
+    <mapping resource="Surveillance.hbm.xml"/>
+    <mapping resource="User.hbm.xml"/>
+    <mapping resource="Personevents.hbm.xml"/>
+    <mapping resource="RelationshipType.hbm.xml"/>
+    <mapping resource="Address.hbm.xml"/>
+    <mapping resource="Events.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

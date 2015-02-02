@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.Personevents" table="personevents">
+    <id name="personeventsId" type="java.lang.Integer">
+      <column name="personevents_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="org.icap.entities.Facility" fetch="select" name="facility">
+      <column name="facility_mflcode" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.User" fetch="select" name="user">
+      <column name="user_id"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.Events" fetch="select" name="events">
+      <column name="event_id" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.Person" fetch="select" name="person">
+      <column name="person_id" not-null="true"/>
+    </many-to-one>
+    <property name="eventdatetime" type="timestamp">
+      <column length="19" name="eventdatetime"/>
+    </property>
+    <property name="valueText" type="string">
+      <column length="45" name="value_text"/>
+    </property>
+    <property name="valueBoolean" type="java.lang.Boolean">
+      <column name="value_boolean"/>
+    </property>
+    <property name="valueDatetime" type="timestamp">
+      <column length="19" name="value_datetime"/>
+    </property>
+    <property name="valueNumeric" type="java.lang.Double">
+      <column name="value_numeric" precision="22" scale="0"/>
+    </property>
+    <property name="valueCoded" type="string">
+      <column length="45" name="value_coded"/>
+    </property>
+    <property name="valuesource" type="java.lang.Integer">
+      <column name="valuesource">
+        <comment>This is where the value is picked from. e.g. blue card, lab slip .</comment>
+      </column>
+    </property>
+    <property name="remarks" type="string">
+      <column length="100" name="remarks"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="false" name="birthMetadatas" table="birth_metadata">
+      <key>
+        <column name="personevent_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.BirthMetadata"/>
+    </set>
+  </class>
+</hibernate-mapping>

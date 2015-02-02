@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.Person" table="person">
+    <id name="personId" type="java.lang.Integer">
+      <column name="person_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="org.icap.entities.MaritalStatusType" fetch="select" name="maritalStatusType">
+      <column name="marital_status" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.PatientSource" fetch="select" name="patientSource">
+      <column name="patient_source_id" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.Location" fetch="select" name="location">
+      <column name="location_id"/>
+    </many-to-one>
+    <property name="personGuid" type="string">
+      <column length="45" name="person_guid"/>
+    </property>
+    <property name="firstName" type="string">
+      <column length="45" name="first_name"/>
+    </property>
+    <property name="middleName" type="string">
+      <column length="45" name="middle_name"/>
+    </property>
+    <property name="lastName" type="string">
+      <column length="45" name="last_name"/>
+    </property>
+    <property name="sex" type="string">
+      <column length="6" name="sex"/>
+    </property>
+    <property name="birthdate" type="date">
+      <column length="10" name="birthdate"/>
+    </property>
+    <property name="deathdate" type="timestamp">
+      <column length="19" name="deathdate"/>
+    </property>
+    <property name="dateCreated" type="timestamp">
+      <column length="19" name="date_created"/>
+    </property>
+    <property name="dateModified" type="timestamp">
+      <column length="19" name="date_modified"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="false" name="personeventses" table="personevents">
+      <key>
+        <column name="person_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.Personevents"/>
+    </set>
+    <set fetch="select" inverse="false" lazy="false" name="relationshipsForPersonbId" table="relationship">
+      <key>
+        <column name="personb_id" not-null="true">
+          <comment>the relative</comment>
+        </column>
+      </key>
+      <one-to-many class="org.icap.entities.Relationship"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="false" name="personIdentifiers" table="person_identifier">
+      <key>
+        <column name="person_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.PersonIdentifier"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="false" name="relationshipsForPersonaId" table="relationship">
+      <key>
+        <column name="persona_id" not-null="true">
+          <comment>person of reference</comment>
+        </column>
+      </key>
+      <one-to-many class="org.icap.entities.Relationship"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="false" name="addresses" table="address">
+      <key>
+        <column name="person_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.Address"/>
+    </set>
+  </class>
+</hibernate-mapping>

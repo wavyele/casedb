@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.Address" table="address">
+    <id name="addressId" type="java.lang.Integer">
+      <column name="address_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="org.icap.entities.Person" fetch="select" name="person">
+      <column name="person_id" not-null="true"/>
+    </many-to-one>
+    <property name="postalAddress" type="string">
+      <column length="45" name="postal_address"/>
+    </property>
+    <property name="telephone" type="string">
+      <column length="45" name="telephone"/>
+    </property>
+    <property name="addresscol" type="string">
+      <column length="45" name="addresscol"/>
+    </property>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.RelationshipType" table="relationship_type">
+    <id name="relationshipTypeId" type="int">
+      <column name="relationship_type_id"/>
+      <generator class="assigned"/>
+    </id>
+    <property name="relationshipType" type="string">
+      <column length="45" name="relationship_type"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="false" name="relationships" table="relationship">
+      <key>
+        <column name="relationship_type_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.Relationship"/>
+    </set>
+  </class>
+</hibernate-mapping>

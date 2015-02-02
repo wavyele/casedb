@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="casebased" name="org.icap.entities.PatientSource" table="patient_source">
+    <id name="patientSourceId" type="java.lang.Integer">
+      <column name="patient_source_id"/>
+      <generator class="identity"/>
+    </id>
+    <property name="patientSourceName" type="string">
+      <column length="45" name="patient_source_name"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="false" name="persons" table="person">
+      <key>
+        <column name="patient_source_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.icap.entities.Person"/>
+    </set>
+  </class>
+</hibernate-mapping>
