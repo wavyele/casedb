@@ -9,10 +9,8 @@ import org.kemricdc.entities.Person;
 import org.kemricdc.entities.PersonIdentifier;
 import org.kemricdc.hapi.util.OruFiller;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v24.datatype.NM;
 import ca.uhn.hl7v2.model.v24.group.ORU_R01_ORDER_OBSERVATION;
@@ -28,11 +26,10 @@ import ca.uhn.hl7v2.model.v24.segment.PID;
  * @author Stanslaus Odhiambo
  *
  */
-@Component
-public class EventsHl7Service implements HL7Service {
+
+public class EventsHl7Service implements IHL7Service {
 	private Person person;
 	private AppProperties appProperties;
-	private SendHl7Message sendHl7Message;
 	private List<OruFiller> oruFillers;
 
 
@@ -51,7 +48,6 @@ public class EventsHl7Service implements HL7Service {
 
 	@Autowired
 	public void setSendHl7Message(SendHl7Message sendHl7Message) {
-		this.sendHl7Message = sendHl7Message;
 	}
 
 
@@ -70,9 +66,13 @@ public class EventsHl7Service implements HL7Service {
 		String hl7Message;
 		try {
 			hl7Message = generateORU(trigger);
-			sendHl7Message.sendStringMessage(hl7Message);
-		} catch (HL7Exception | IOException e) {
-			e.printStackTrace();
+			new SendHl7Message().sendMessage(hl7Message, (Integer)appProperties.getProperty("port"), (String)appProperties.getProperty("host"));
+		} catch (Exception e) {
+			if(e instanceof HL7Exception || e instanceof IOException){
+				e.printStackTrace();				
+			}else if(e instanceof NullPointerException){
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -150,33 +150,33 @@ public class EventsHl7Service implements HL7Service {
 		 * the MSH segment of the message, including the message type, the
 		 * timestamp, and the control ID.
 		 */
-		message.initQuickstart(appProperties.getProperty("event_message_type"),
+		/*message.initQuickstart(appProperties.getProperty("event_message_type"),
 				trigger,
-				appProperties.getProperty("event_processing_id"));
+				appProperties.getProperty("event_processing_id"));*/
 
 		MSH msh = message.getMSH();
 		msh.getSendingApplication().getNamespaceID()
-				.setValue(appProperties.getProperty("application_name"));
+				.setValue((String) appProperties.getProperty("application_name"));
 		msh.getSendingFacility().getNamespaceID()
-				.setValue(appProperties.getProperty("facility_name"));
+				.setValue((String) appProperties.getProperty("facility_name"));
 		msh.getMessageType().getMessageStructure()
 		.setValue("ORU_" + trigger);
 
 		// populate the receiving application details
 		msh.getReceivingApplication().getNamespaceID()
-				.setValue(appProperties.getProperty("cds_name"));
+				.setValue((String) appProperties.getProperty("cds_name"));
 		msh.getReceivingFacility().getNamespaceID()
-				.setValue(appProperties.getProperty("cdsapplication_name"));
-		msh.getSequenceNumber().setValue(appProperties.getProperty("sequence_number"));
+				.setValue((String) appProperties.getProperty("cdsapplication_name"));
+		msh.getSequenceNumber().setValue((String) appProperties.getProperty("sequence_number"));
 
 		ORU_R01_PATIENT oruPatient = message.getPATIENT_RESULT().getPATIENT();
 		PID pid = oruPatient.getPID();
-		pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(person.getDob());
+		pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(person.getDob().toString());
 		pid.getPatientName(0).getFamilyName().getSurname()
 				.setValue(person.getLastName());
 		pid.getPatientName(0).getGivenName().setValue(person.getFirstName());
 		pid.getAdministrativeSex().setValue(person.getSex().getValue());
-		pid.getMaritalStatus().getCe1_Identifier()
+		pid.getMaritalStatus().getAlternateIdentifier()
 				.setValue(person.getMaritalStatus().getValue());
 
 		// Changed to the below to handle scenario where the patient has more
@@ -206,14 +206,14 @@ public class EventsHl7Service implements HL7Service {
 
 		// Populate the OBR
 		OBR obr = orderObservation.getOBR();
-		obr.getSetIDOBR().setValue(appProperties.getProperty("obr_id"));
+		obr.getSetIDOBR().setValue((String) appProperties.getProperty("obr_id"));
 		obr.getFillerOrderNumber().getEntityIdentifier()
-				.setValue(appProperties.getProperty("fillerOrderNumberIdentifier"));
+				.setValue((String) appProperties.getProperty("fillerOrderNumberIdentifier"));
 		obr.getFillerOrderNumber().getNamespaceID()
-				.setValue(appProperties.getProperty("fillerOrderNumberNamespace"));
+				.setValue((String) appProperties.getProperty("fillerOrderNumberNamespace"));
 
 		obr.getUniversalServiceIdentifier().getIdentifier()
-				.setValue(appProperties.getProperty("facility_mfl_code"));
+				.setValue((String) appProperties.getProperty("facility_mfl_code"));
 		OBX obx = null;
 		Varies value;
 
@@ -231,7 +231,7 @@ public class EventsHl7Service implements HL7Service {
 
 			// Populate the OBXs
 			obx = orderObservation.getOBSERVATION(i).getOBX();
-			obx.getSetIDOBX().setValue(appProperties.getProperty(Integer.toString(i)));
+			obx.getSetIDOBX().setValue((String) appProperties.getProperty(Integer.toString(i)));
 
 			// We are working with a fixed value of ST - pretty much works for us
 			obx.getValueType().setValue("ST");
@@ -350,7 +350,7 @@ public class EventsHl7Service implements HL7Service {
 
 		// Print the message (remember, the MSH segment was not fully or
 		// correctly populated)
-		String finalString = message.encode();
+		String finalString = message.getMessage().toString();//.encode();
 		System.out.println(finalString);
 
 		/*
