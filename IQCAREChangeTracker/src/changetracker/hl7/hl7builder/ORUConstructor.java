@@ -4,16 +4,12 @@
  * and open the template in the editor.
  */
 
-package changetracker.util;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+package changetracker.hl7.hl7builder;
 
 /**
  *
  * @author Vicky
  */
-public class Decriptor {
+public class ORUConstructor {
     
 }
