@@ -1,21 +1,20 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
-    <class name="org.kemricdc.entities.EventValues" table="event_values" catalog="casebased">
-        <id name="eventValuesId" type="java.lang.Integer">
-            <column name="event_values_id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="events" class="org.kemricdc.entities.Events" fetch="select">
-            <column name="events_idevent" not-null="true" />
-        </many-to-one>
-        <property name="value" type="string">
-            <column name="value" length="45" />
-        </property>
-        <property name="eventId" type="string">
-            <column name="event_id" length="45" />
-        </property>
-    </class>
+  <class catalog="casebased" name="org.icap.entities.EventValues" table="event_values">
+    <id name="eventValuesId" type="java.lang.Integer">
+      <column name="event_values_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="org.icap.entities.Events" fetch="select" name="events">
+      <column name="events_idevent" not-null="true"/>
+    </many-to-one>
+    <property name="value" type="string">
+      <column length="45" name="value"/>
+    </property>
+    <property name="eventId" type="string">
+      <column length="45" name="event_id"/>
+    </property>
+  </class>
 </hibernate-mapping>

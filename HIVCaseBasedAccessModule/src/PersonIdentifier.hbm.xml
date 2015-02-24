@@ -1,21 +1,20 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Nov 28, 2014 11:52:33 AM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
-    <class name="org.kemricdc.entities.PersonIdentifier" table="person_identifier" catalog="casebased">
-        <id name="personIdentifierId" type="java.lang.Integer">
-            <column name="person_identifier_id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="identifierType" class="org.kemricdc.entities.IdentifierType" fetch="select">
-            <column name="identifier_type_id" not-null="true" />
-        </many-to-one>
-        <many-to-one name="person" class="org.kemricdc.entities.Person" fetch="select">
-            <column name="person_id" not-null="true" />
-        </many-to-one>
-        <property name="identifier" type="string">
-            <column name="identifier" length="45" />
-        </property>
-    </class>
+  <class catalog="casebased" name="org.icap.entities.PersonIdentifier" table="person_identifier">
+    <id name="personIdentifierId" type="java.lang.Integer">
+      <column name="person_identifier_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="org.icap.entities.IdentifierType" fetch="select" name="identifierType">
+      <column name="identifier_type_id" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="org.icap.entities.Person" fetch="select" name="person">
+      <column name="person_id" not-null="true"/>
+    </many-to-one>
+    <property name="identifier" type="string">
+      <column length="45" name="identifier"/>
+    </property>
+  </class>
 </hibernate-mapping>

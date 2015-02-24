@@ -1,22 +1,22 @@
-NAME,event_datatype,singleton_event,min_value,max_value,description
-HIV_DIAGNOSIS,NULL,NULL,NULL,NULL,NULL
-HIV_CARE_INITIATION,NULL,NULL,NULL,NULL,NULL
-ART_START,NULL,NULL,NULL,NULL,NULL
-PEP_DATE,NULL,NULL,NULL,NULL,NULL
-TRANSFER_IN,NULL,NULL,NULL,NULL,NULL
-CD4_COUNT,NULL,NULL,NULL,NULL,NULL
-VIRAL_LOAD,NULL,NULL,NULL,NULL,NULL
-WHO_STAGE,NULL,NULL,NULL,NULL,NULL
-TB_DIAGNOSIS,NULL,NULL,NULL,NULL,NULL
-TB_TREATMENT,NULL,NULL,NULL,NULL,NULL
-LOST_TO_FOLLOWUP,NULL,NULL,NULL,NULL,NULL
-DECEASED,NULL,NULL,NULL,NULL,NULL
-CHANGE_IN_REGIMEN,NULL,NULL,NULL,NULL,NULL
-FIRST_LINE_REGIMEN,NULL,NULL,NULL,NULL,NULL
-SECOND_LINE_REGIMEN,NULL,NULL,NULL,NULL,NULL
-PMTCT_INITIATION,NULL,NULL,NULL,NULL,NULL
-BIRTH,NULL,NULL,NULL,NULL,NULL
-TRANSFER_OUT,NULL,NULL,NULL,NULL,NULL
-ART_ELLIGIBILITY,NULL,NULL,NULL,NULL,NULL
-CD4_PERCENT,NULL,NULL,NULL,NULL,NULL
-COTRIMOXAZOLE,NULL,NULL,NULL,NULL,NULL
+ICD10/SNOMED ID,NAME,event_datatype,singleton_event,min_value,max_value,description
+,HIV_DIAGNOSIS,DATE,TRUE,NULL,NULL,Date the patient was found to be HIV positive
+,HIV_CARE_INITIATION,DATE,TRUE,NULL,NULL,Date the HIV Positive patient is enrolled into HIV Care
+,ART_START,DATE,NULL,NULL,NULL,Date the patient was started on ART
+,PEP_DATE,DATE,FALSE,NULL,NULL,Date Patient was enrolled into PEP
+,TRANSFER_IN,DATE,NULL,NULL,NULL,Date Patient was transferred into current facility. Neet to track the source facility.
+,CD4_COUNT,INTEGER,FALSE,NULL,NULL,Integer value of the CD4 Count in cells/µL  
+,VIRAL_LOAD,DOUBLE,FALSE,NULL,NULL,Double value representing the viral load in copies/µL
+,WHO_STAGE,INTEGER,FALSE,1,4,Integer value of the WHO stage
+,TB_DIAGNOSIS,DATE,FALSE,NULL,NULL,Date the patient is diagnosed with TB
+,TB_TREATMENT,DATE,NULL,NULL,NULL,Date the patient is started on TB treatment
+,LOSS_TO_FOLLOWUP,DATE,FALSE,NULL,NULL,Date the patient is deemed to have failed to show up long enough to be considered a loss to follow-up case
+,DECEASED,DATE,TRUE,NULL,NULL,Date of death of the patient
+,CHANGE_IN_REGIMEN,NULL,NULL,NULL,NULL,NULL
+,FIRST_LINE_REGIMEN,STRING,NULL,NULL,NULL,The Regimen given to the patient at time or ART start
+,SECOND_LINE_REGIMEN,STRING,NULL,NULL,NULL,Second Line Regimen given to patient******
+,PMTCT_INITIATION,DATE,FALSE,NULL,NULL,Date patient is enrolled to PMTCT
+,BIRTH,DATE,FALSE,NULL,NULL,Date a mother under PMTCT or not gives birth to a child
+,TRANSFER_OUT,DATE,FALSE,NULL,NULL,Date a patient is transferred out to another facility - Need to track the receiving facility
+,ART_ELLIGIBILITY,DATE,TRUE,NULL,NULL,Date a patient becomes elligible to ART Care - Not necessarily when they are started on ART
+,CD4_PERCENT,DOUBLE,FALSE,NULL,NULL,Double value of the percentage value of CD4
+,COTRIMOXAZOLE,DATE,NULL,NULL,NULL,Date cotrimoxazole first dispensed

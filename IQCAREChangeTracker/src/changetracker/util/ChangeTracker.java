@@ -6,28 +6,15 @@
 
 package changetracker.util;
 
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.sql.Blob;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,111 +22,41 @@ import java.util.logging.Logger;
  *
  * @author Vicky
  */
-public class ChangeTracker extends TimerTask {
-    
-    private static final String DB_DRIVER = "net.sourceforge.jtds.jdbc.Driver";
-    private static final String DB_CONNECTION = "jdbc:jtds:sqlserver://localhost:1433/iqcare";
-    private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "victoria@89";
+public class ChangeTracker {
     
     
-    @Override
-    public void run() {
-        // trackPatientEnrollment();
-        
-    }
     
     
-   
     public static int getLastVersion(String table)
     {
-        Properties prop = new Properties();
-	InputStream input = null;
-        int last_version = -1;
+        return Integer.parseInt(PropertiesManager.readConfigFile(table+".current_version","config.properties"));
         
-        try {
- 
-		input = new FileInputStream("config.properties");
- 
-		// load the properties file
-		prop.load(input);
- 
-		// get the property value and print it out
-		
-                last_version = Integer.parseInt(prop.getProperty(table+".current_version"));
-                
-	} catch (IOException ex) {
-		ex.printStackTrace();
-	}
-        finally {
-		if (input != null) {
-			try {
-				input.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-        return last_version;
     }
-    public static void setCurrentVersion(String table, int current_version){
-        Properties prop = new Properties();
-	FileOutputStream output = null;
-        FileInputStream input = null;
- 
-	try {
-                //first load old one:
-                input = new FileInputStream("config.properties");
-                prop.load(input);
+    public static synchronized void setCurrentVersion(String table, int current_version){
+      
+        PropertiesManager.modifyConfigFile(table+".current_version", String.valueOf(current_version),"config.properties");
         
-		// set the properties value
-		prop.setProperty(table+".current_version", String.valueOf(current_version));
-                
-                //save modified properies file
-                output = new FileOutputStream("config.properties");
-                prop.store(output, null);
- 
-	} catch (IOException io) {
-		io.printStackTrace();
-	} finally {
-		if (output != null) {
-			try {
-				output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
- 
-	}
     }
-    private static Connection getDBConnection() {
- 
-        Connection dbConnection = null;
 
-        try {
-
-                Class.forName(DB_DRIVER);
-
-        } catch (ClassNotFoundException e) {
-
-                System.out.println(e.getMessage());
-
+    
+    public static List resultSetToArrayList(ResultSet rs) throws SQLException{
+        
+        
+        ResultSetMetaData md = rs.getMetaData();
+        int columns = md.getColumnCount();
+        ArrayList list = new ArrayList(50);
+        while (rs.next()){
+           
+           HashMap row = new HashMap(columns);
+           for(int i=1; i<=columns; ++i){           
+            row.put(md.getColumnName(i),rs.getObject(i));
+            
+            
+           }
+            list.add(row);
         }
-
-        try {
-
-                dbConnection = DriverManager.getConnection(
-                     DB_CONNECTION, DB_USER,DB_PASSWORD);
-                return dbConnection;
-
-        } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-
-        }
-
-        return dbConnection;
- 
+        
+       return list;
     }
     
     public static List resultSetToArrayList(ResultSet rs, String table) throws SQLException{
@@ -153,7 +70,6 @@ public class ChangeTracker extends TimerTask {
             {
                
                     int change_version = rs.getInt("SYS_CHANGE_VERSION");
-                    System.out.println("change_version: "+change_version);
                     setCurrentVersion(table,change_version );
                
             }
@@ -165,7 +81,7 @@ public class ChangeTracker extends TimerTask {
            }
             list.add(row);
         }
-
+       
        return list;
     }
     
@@ -178,7 +94,7 @@ public class ChangeTracker extends TimerTask {
         
 
         try {
-                dbConnection = getDBConnection();
+                dbConnection = DBConnector.getDBConnection();
                 preparedStatement = dbConnection.prepareStatement(sql_query);
 
                 // execute select SQL stetement
@@ -230,7 +146,7 @@ public class ChangeTracker extends TimerTask {
         sql_query += "Set @SymKey = 'Open symmetric key Key_CTC decryption by password=''ttwbvXWpqb5WOLfLrBgisw=='''\n";
         sql_query +="exec(@SymKey)\n";
         sql_query+="SET @PreviousVersion = ?\n";
-        sql_query+="SELECT CTTable."+primary_key+", CTTable.SYS_CHANGE_OPERATION,Emp.*,\n";
+        sql_query+="SELECT CTTable."+primary_key+", CTTable.SYS_CHANGE_OPERATION, Emp.*,\n";
         if(table.equals("Mst_Patient"))
         {
         sql_query+="convert(varchar(50), decryptbykey(Emp.firstname)) AS firstname_decrypted\n";
@@ -245,8 +161,10 @@ public class ChangeTracker extends TimerTask {
         sql_query+="ORDER BY CTTable.SYS_CHANGE_VERSION DESC";
         sql_query +="\nClose symmetric key Key_CTC";
         
+        
+        
         try {
-                dbConnection = getDBConnection();
+                dbConnection = DBConnector.getDBConnection();
                 
                 preparedStatement = dbConnection.prepareStatement(sql_query,
                         ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -259,20 +177,7 @@ public class ChangeTracker extends TimerTask {
                 //move cursor to last record in resultset
                 
                 results = resultSetToArrayList(rs,table);
-                
-                
-                
-                
-
-                
-                  
-                
-                
-                //rs.last()
-                
-                
-               
-
+             
         } catch (SQLException e) {
 
                 System.out.println(e.getMessage());
@@ -289,6 +194,204 @@ public class ChangeTracker extends TimerTask {
 
         }
         return results;
+ 
+    }
+    
+    public static List getPatient(int primary_key) throws SQLException {
+ 
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs;
+        List results = null;
+        
+        String sql_query ="Declare @SymKey varchar(400)\n";
+        sql_query +="Set @SymKey = 'Open symmetric key Key_CTC decryption by password=''ttwbvXWpqb5WOLfLrBgisw=='''\n";
+        sql_query +="exec(@SymKey)\n";
+        sql_query +="SELECT convert(varchar(50), decryptbykey(Emp.firstname)) AS firstname_decrypted,\n";
+        sql_query +="convert(varchar(50), decryptbykey(Emp.middlename)) AS middlename_decrypted ,\n";
+        sql_query +="convert(varchar(50), decryptbykey(Emp.lastname)) AS lastname_decrypted ,*\n";
+        sql_query +="FROM [iqcare].[dbo].mst_Patient AS Emp WHERE [Ptn_Pk] = ?\n";
+        sql_query +="Close symmetric key Key_CTC";
+        
+        try {
+                dbConnection = DBConnector.getDBConnection();
+                
+                preparedStatement = dbConnection.prepareStatement(sql_query,
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+                preparedStatement.setInt(1, primary_key);
+
+                // execute select SQL stetement
+                rs = preparedStatement.executeQuery();
+                
+                results = resultSetToArrayList(rs);
+                
+                
+           } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+
+        } finally {
+
+                if (preparedStatement != null) {
+                        preparedStatement.close();
+                }
+
+                if (dbConnection != null) {
+                        dbConnection.close();
+                }
+
+        }
+        return results;
+ 
+    }
+    
+    public static void setPK(String table, String proposed_field) throws SQLException{
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        
+        String sql_query ="IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE  CONSTRAINT_TYPE = 'PRIMARY KEY'\n";
+        sql_query +="AND TABLE_NAME = '"+table+"'  \n";
+        sql_query +="AND TABLE_SCHEMA ='dbo' )\n";
+        sql_query +="BEGIN\n";
+        sql_query +="ALTER TABLE "+table+" ADD PRIMARY KEY ("+proposed_field+")\n";
+        sql_query +="END";
+        
+        try {
+                dbConnection = DBConnector.getDBConnection();
+                
+                preparedStatement = dbConnection.prepareStatement(sql_query);
+
+                // execute SQL stetement
+                preparedStatement.execute();
+                
+                
+           } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+
+        } finally {
+
+                if (preparedStatement != null) {
+                        preparedStatement.close();
+                }
+
+                if (dbConnection != null) {
+                        dbConnection.close();
+                }
+
+        }
+    
+    }
+    public static void enableDBChangeTracking() throws SQLException {
+ 
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String db_name = PropertiesManager.readConfigFile("db_name","connection.properties");
+        
+        
+        
+        String sql_query ="IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_databases \n";
+        sql_query +="WHERE database_id = DB_ID('"+db_name+"'))\n";
+        sql_query +="BEGIN\n";
+        sql_query +="ALTER DATABASE "+db_name+"\n";
+        sql_query +="SET CHANGE_TRACKING = ON\n";
+        sql_query +="(CHANGE_RETENTION = 5 DAYS, AUTO_CLEANUP = ON);\n";
+        sql_query +="END\n";
+        
+        try {
+                dbConnection = DBConnector.getDBConnection();
+                
+                preparedStatement = dbConnection.prepareStatement(sql_query);
+
+                // execute SQL stetement
+                preparedStatement.execute();
+                
+                
+           } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+
+        } finally {
+
+                if (preparedStatement != null) {
+                        preparedStatement.close();
+                }
+
+                if (dbConnection != null) {
+                        dbConnection.close();
+                }
+
+        }
+        //return results;
+ 
+    }
+    public static Timestamp getVisitDate(int visit_id){
+        
+        PreparedStatement preparedStatement = null;
+        ResultSet rs;
+        Timestamp visit_date = null;
+        
+        String sql_query ="SELECT VisitDate FROM iqcare.dbo.ord_Visit where Visit_Id = ?";
+        
+        try(Connection dbConnection = DBConnector.getDBConnection();) {
+                
+                
+                preparedStatement = dbConnection.prepareStatement(sql_query);
+                preparedStatement.setInt(1, visit_id);
+
+                // execute select SQL stetement
+                rs = preparedStatement.executeQuery();
+                
+                while(rs.next())
+                {
+                    visit_date = rs.getTimestamp("VisitDate");
+                }
+                
+                
+           } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+
+        }
+        return visit_date;
+    }
+    public static void enableTableChangeTracking(String table) throws SQLException {
+ 
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        
+        String sql_query ="IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables \n";
+        sql_query +="WHERE object_id = OBJECT_ID('"+table+"'))\n" ;
+        sql_query +="BEGIN\n";
+        sql_query +="ALTER TABLE "+table+"\n";
+        sql_query +="ENABLE CHANGE_TRACKING\n";
+        sql_query +="WITH (TRACK_COLUMNS_UPDATED = ON)\n";
+        sql_query +="END";
+        
+        try {
+                dbConnection = DBConnector.getDBConnection();
+                
+                preparedStatement = dbConnection.prepareStatement(sql_query);
+
+                // execute select SQL stetement
+                preparedStatement.execute();
+                
+                
+           } catch (SQLException e) {
+
+                System.out.println(e.getMessage());
+
+        } finally {
+
+                if (preparedStatement != null) {
+                        preparedStatement.close();
+                }
+
+                if (dbConnection != null) {
+                        dbConnection.close();
+                }
+
+        }
  
     }
 
