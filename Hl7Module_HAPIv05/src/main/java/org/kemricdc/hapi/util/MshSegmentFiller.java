@@ -74,6 +74,8 @@ public class MshSegmentFiller {
 		mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(sdf.format(Calendar.getInstance().getTime()));
 		mshSegment.getSendingApplication().getNamespaceID().setValue((String) appProperties.getProperty("application_name"));
 		mshSegment.getSendingFacility().getNamespaceID().setValue((String) appProperties.getProperty("facility_name"));
+		mshSegment.getSendingFacility().getUniversalID().setValue((String) appProperties.getProperty("facility_mfl_code"));
+			
 		mshSegment.getSequenceNumber().setValue((String) appProperties.getProperty("sequence_number"));
 
 		return mshSegment;
