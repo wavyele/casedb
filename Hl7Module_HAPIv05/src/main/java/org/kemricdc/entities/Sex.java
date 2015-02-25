@@ -7,7 +7,7 @@ package org.kemricdc.entities;
  */
 public enum Sex {
 
-	MALE("male"), FEMALE("female"), UNKNOWN("unknown");
+	MALE("MALE"), FEMALE("FEMALE"), UNKNOWN("UNKBOWN"),MISSING("MISSING");
 
 	private final String value;
 
