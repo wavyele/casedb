@@ -7,7 +7,7 @@ package org.kemricdc.entities;
  */
 public enum IdentifierType {
 
-	PID("PID_NUMBER"),CCC("CCC"),PMTCT("PMTCT"), ANC("ANC"), TB("TB");
+	PID("PID_NUMBER"),CCC("CCC_NUMBER"),PMTCT("PMTCT_NUMBER"), ANC("ANC_NUMBER"), TB("TB_NUMBER"),HEI("HEI_NUMBER"),NATIONAL("NATIONAL_ID");
 
 	private final String value;
 
