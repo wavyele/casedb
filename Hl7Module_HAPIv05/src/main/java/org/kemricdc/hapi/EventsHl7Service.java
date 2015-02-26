@@ -43,8 +43,7 @@ public class EventsHl7Service implements IHL7Service {
 	}
 
 	@Autowired
-	public EventsHl7Service(Person person, List<OruFiller> oruFillers,
-			AppProperties appProperties) {
+	public EventsHl7Service(Person person, List<OruFiller> oruFillers, AppProperties appProperties) {
 		this.person = person;
 		this.oruFillers = oruFillers;
 		this.appProperties = appProperties;
@@ -83,12 +82,8 @@ public class EventsHl7Service implements IHL7Service {
 		String hl7Message;
 		try {
 			hl7Message = generateORU(trigger);
-			new SendHl7Message()
-					.sendMessage(hl7Message,
-							Integer.valueOf((String) appProperties
-									.getProperty("port")),
-							(String) appProperties.getProperty("host"),(String) appProperties
-							.getProperty("hapi_dump"));
+			new SendHl7Message().sendMessage(hl7Message, Integer.valueOf((String) appProperties.getProperty("port")),
+					(String) appProperties.getProperty("host"), (String) appProperties.getProperty("hapi_dump"));
 		} catch (Exception e) {
 			if (e instanceof HL7Exception || e instanceof IOException) {
 				e.printStackTrace();
@@ -99,8 +94,7 @@ public class EventsHl7Service implements IHL7Service {
 
 	}
 
-	public String generateORU(String triggerEvent) throws HL7Exception,
-			IOException {
+	public String generateORU(String triggerEvent) throws HL7Exception, IOException {
 
 		/**
 		 * First, a message object is constructed
@@ -109,8 +103,7 @@ public class EventsHl7Service implements IHL7Service {
 
 		MSH mshSegment = message.getMSH();
 
-		MshSegmentFiller mshSegmentFiller = new MshSegmentFiller(mshSegment,
-				appProperties, "ORU", triggerEvent);
+		MshSegmentFiller mshSegmentFiller = new MshSegmentFiller(mshSegment, appProperties, "ORU", triggerEvent);
 		mshSegment = mshSegmentFiller.fillMshSegment();
 
 		ORU_R01_PATIENT oruPatient = message.getPATIENT_RESULT().getPATIENT();
@@ -124,28 +117,15 @@ public class EventsHl7Service implements IHL7Service {
 		 * which is itself in a group called PATIENT_RESULT. These groups are
 		 * reached using named accessors.
 		 */
-		ORU_R01_ORDER_OBSERVATION orderObservation = message
-				.getPATIENT_RESULT().getORDER_OBSERVATION();
+		ORU_R01_ORDER_OBSERVATION orderObservation = message.getPATIENT_RESULT().getORDER_OBSERVATION();
 
 		// Populate the OBR
 		OBR obr = orderObservation.getOBR();
-		obr.getSetIDOBR()
-				.setValue((String) appProperties.getProperty("obr_id"));
-		obr.getFillerOrderNumber()
-				.getEntityIdentifier()
-				.setValue(
-						(String) appProperties
-								.getProperty("fillerOrderNumberIdentifier"));
-		obr.getFillerOrderNumber()
-				.getNamespaceID()
-				.setValue(
-						(String) appProperties
-								.getProperty("fillerOrderNumberNamespace"));
+		obr.getSetIDOBR().setValue((String) appProperties.getProperty("facility_mfl_code"));
+		obr.getFillerOrderNumber().getEntityIdentifier().setValue((String) appProperties.getProperty("fillerOrderNumberIdentifier"));
+		obr.getFillerOrderNumber().getNamespaceID().setValue((String) appProperties.getProperty("fillerOrderNumberNamespace"));
 
-		obr.getUniversalServiceIdentifier()
-				.getIdentifier()
-				.setValue(
-						(String) appProperties.getProperty("facility_mfl_code"));
+		obr.getUniversalServiceIdentifier().getIdentifier().setValue((String) appProperties.getProperty("facility_mfl_code"));
 		OBX obx = null;
 		Varies value;
 
@@ -170,12 +150,9 @@ public class EventsHl7Service implements IHL7Service {
 			obx.getValueType().setValue("ST");
 
 			// Form the Observation Identifier
-			obx.getObservationIdentifier().getIdentifier()
-					.setValue(oruFiller.getObservationIdentifier());
-			obx.getObservationIdentifier().getText()
-					.setValue(oruFiller.getObservationIdentifierText());
-			obx.getObservationIdentifier().getNameOfCodingSystem()
-					.setValue(oruFiller.getCodingSystem());
+			obx.getObservationIdentifier().getIdentifier().setValue(oruFiller.getObservationIdentifier());
+			obx.getObservationIdentifier().getText().setValue(oruFiller.getObservationIdentifierText());
+			obx.getObservationIdentifier().getNameOfCodingSystem().setValue(oruFiller.getCodingSystem());
 
 			// Form the Observation Sub-ID if necessary
 			obx.getObservationSubId().setValue(oruFiller.getObservationSubId());
@@ -199,37 +176,29 @@ public class EventsHl7Service implements IHL7Service {
 			obx.getProbability(0).setValue(oruFiller.getProbability());
 
 			// Form Nature of Abnormal Test
-			obx.getNatureOfAbnormalTest().setValue(
-					oruFiller.getNatureOfAbnormalTest());
+			obx.getNatureOfAbnormalTest().setValue(oruFiller.getNatureOfAbnormalTest());
 
 			// Form Result Status
-			obx.getObservationResultStatus().setValue(
-					oruFiller.getResultStatus());
+			obx.getObservationResultStatus().setValue(oruFiller.getResultStatus());
 
 			// Form the Date of Last Normal Values
-			obx.getDateLastObservationNormalValue().getTimeOfAnEvent()
-					.setValue(oruFiller.getDateOfLastNormalValue());
+			obx.getDateLastObservationNormalValue().getTimeOfAnEvent().setValue(oruFiller.getDateOfLastNormalValue());
 
 			// set the User Defined Access Checks if necessary
-			obx.getUserDefinedAccessChecks().setValue(
-					oruFiller.getUserDefinedAccessChecks());
+			obx.getUserDefinedAccessChecks().setValue(oruFiller.getUserDefinedAccessChecks());
 
 			// set Date/Time of the Observation
-			obx.getDateTimeOfTheObservation().getTimeOfAnEvent()
-					.setValue(oruFiller.getDateTimeOfObservation());
+			obx.getDateTimeOfTheObservation().getTimeOfAnEvent().setValue(oruFiller.getDateTimeOfObservation());
 
 			// set the Producer's ID
 			obx.getProducerSID().getText().setValue(oruFiller.getProducerId());
 
 			// form the Responsible Observer
-			obx.getResponsibleObserver().getIDNumber()
-					.setValue(oruFiller.getResponsibleObserverId());
-			obx.getResponsibleObserver().getGivenName()
-					.setValue(oruFiller.getResponsibleObserverGivenName());
+			obx.getResponsibleObserver().getIDNumber().setValue(oruFiller.getResponsibleObserverId());
+			obx.getResponsibleObserver().getGivenName().setValue(oruFiller.getResponsibleObserverGivenName());
 
 			// Form the Observation Method
-			obx.getObservationMethod(0).getText()
-					.setValue(oruFiller.getObservationMethod());
+			obx.getObservationMethod(0).getText().setValue(oruFiller.getObservationMethod());
 
 		}
 
