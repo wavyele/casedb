@@ -1,0 +1,4 @@
+	SETUP INSTRUCTIONS:
+	-------------------
+1. For the source connector, change the directory to point to your hapi dump folder
+2. For the destination connector, change the ip address to the REGIONAL CDS ip address. 
