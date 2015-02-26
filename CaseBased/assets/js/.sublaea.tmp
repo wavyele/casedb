@@ -1,0 +1,128 @@
+$(document).ready(function () {
+		
+	var new_work_item_id;
+		
+	$('#rootwizard').bootstrapWizard({onNext: function(tab, navigation, index) {
+		if(index==2) {
+			// Make sure we entered the name
+			if(!$('#author').val()||!$('#author-type').val()) {
+				if(!$('#author').val())
+				{
+					$('#author').focus();
+				}
+				else if(!$('#author-type').val())
+				{
+					$('#author-type').focus();
+				}
+				
+				return false;
+			}
+			('#work-item-id').val()=new_work_item_id;
+		}
+
+		else if (index==1)
+		{
+			
+			if($('#title').val()==""||$('#work-item-type').val()=="")
+			 {
+			 	if($('#title').val()=="")
+			 	{
+			 		$('#title').focus();
+			 	}
+			 	else if($('#work-item-type').val()=="")
+			 	{
+			 		$('#work-item-type').focus();
+			 	}
+			 	return false;
+			 }
+
+			var work_item_title=$('#title').val();
+            var work_item_type= $('#work-item-type').val();
+                            
+           var url='/ORT/Work_item/create_work_item_with_jpost'; 
+           $.post(url,{'work_item_title':work_item_title,'work_item_type':work_item_type},function(returned_data){
+              console.log(returned_data.description) ;
+              new_work_item_id=returned_data.description;
+              $('#banner').html("<b>xcvzcvx</b>"); 
+           },'json');
+                           
+		}
+		// Set the name for the next tab
+		$('#tab3').html('Hello, ' + $('#name').val());
+		}, onTabShow: function(tab, navigation, index) {
+		var $total = navigation.find('li').length;
+		var $current = index+1;
+		var $percent = ($current/$total) * 100;
+		$('#rootwizard').find('.bar').css({width:$percent+'%'});
+}});
+
+
+		$('.add-author').click(function(event){
+                                   event.preventDefault();
+                                   if($(this))
+                                    if($('#author').val()!="" && $('#author-type').val()!="" )
+                                    { 
+
+                                        var count=0;
+                                        //alert(('#btn-author').value);
+                                        $(this).removeClass('btn-primary');
+                                        $(this).addClass('btn-warning');
+                                        $(this).html("Remove");
+                                        $(this).parent().append('<hr/>');
+                                        $('#clone').clone().removeAttr('id').show().appendTo('#append_div');
+                                        var add_button= $('#append_div').find('button');
+                                        add_button.removeClass('btn-warning');
+                                        add_button.html('');
+                                        add_button.addClass('btn-primary');
+                                        add_button.text('Add Another');
+                                       // $(this).parent().append('<div class="append_div"></div>');
+                                        alert('alivbe');
+
+                                                                                
+                                    }
+                                   
+                                });
+		
+
+		$('#work-item-type-filter').change(function(){
+			var combo_option="";
+			var options_=""
+			var work_item_type= $('#work-item-type-filter').val();
+			var url='/ORT/Work_item/get_work_item_by_work_item_type';
+			$.post(url,{'work_item_type': $('#work-item-type-filter').val()}, function(returned_data){
+				
+				for (var i=0; i<returned_data.length;i++) {
+					//console.log(returned_data[i].work_item_id+' '+returned_data[i].description);
+					combo_option+="<option value='"+returned_data[i].work_item_id+"'> "+returned_data[i].description+"</option> ";
+					
+				}
+				var options_=combo_option;
+				document.getElementById('work-item').innerHTML=options_;
+				document.getElementById('work-item').selectedIndex=-1;
+			},'json');			
+		});
+
+		$('#work-item-type-for-stage').change(function(){			
+			console.log('SDFSD');
+		});
+
+		
+
+		$('.stage-output-item').change(function(){
+			var combo_option="";
+			var options_=""
+			var url='/ORT/Work_item_stage/get_stages_by_work_item_stage';
+			$.post(url,{'values':$('.stage-output-item').val() },function(returned_data){
+				
+				for (var i = 0; i < returned_data.length; i++) {					
+					combo_option+="<option value='"+returned_data[i].stage_id+"'> "+returned_data[i].description+"</option> ";
+				};
+
+				console.log(combo_option);
+				document.getElementById('stage').innerHTML=combo_option;
+				document.getElementById('stage').selectedIndex=-1;
+				
+			} ,'json');
+		});
+	});
+	
