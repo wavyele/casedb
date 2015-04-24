@@ -22,6 +22,14 @@ public class Person {
 	private Date deathDate;
 	private Set<PersonAddress> personAddresses;
 	private Location location;
+	private String telephoneNumber;
+		
+	public String getTelephoneNumber() {
+			return telephoneNumber;
+		}
+	public void setTelephoneNumber(String telephoneNumber) {
+			this.telephoneNumber = telephoneNumber;
+		}
 	public String getFirstName() {
 		return firstName;
 	}

@@ -82,8 +82,10 @@ public class EventsHl7Service implements IHL7Service {
 		String hl7Message;
 		try {
 			hl7Message = generateORU(trigger);
-			new SendHl7Message().sendMessage(hl7Message, Integer.valueOf((String) appProperties.getProperty("port")),
-					(String) appProperties.getProperty("host"), (String) appProperties.getProperty("hapi_dump"));
+			//new SendHl7Message().sendMessage(hl7Message, Integer.valueOf((String) appProperties.getProperty("port")),
+			//		(String) appProperties.getProperty("host"), (String) appProperties.getProperty("hapi_dump"));
+			new SendHl7Message().saveMessageToFileSystem(hl7Message, (String) appProperties.getProperty("hapi_dump"));
+			
 		} catch (Exception e) {
 			if (e instanceof HL7Exception || e instanceof IOException) {
 				e.printStackTrace();

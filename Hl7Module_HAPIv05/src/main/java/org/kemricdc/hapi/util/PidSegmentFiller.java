@@ -52,6 +52,7 @@ public class PidSegmentFiller {
 				.setValue(sdf.format(person.getDob()));
 		pid.getMaritalStatus().getIdentifier()
 				.setValue(person.getMaritalStatus().getValue());
+		pid.getPhoneNumberHome(0).getPhoneNumber().setValue(person.getTelephoneNumber());
 
 		return pid;
 	}

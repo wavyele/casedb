@@ -23,13 +23,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/koochieng/.m2/repository/ca/uhn/hapi/hapi/0.5/hapi-0.5.jar">
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="ca.uhn.hapi"/>
-			<attribute name="maven.artifactId" value="hapi"/>
-			<attribute name="maven.version" value="0.5"/>
-			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>

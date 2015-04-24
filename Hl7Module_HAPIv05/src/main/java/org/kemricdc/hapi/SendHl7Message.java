@@ -71,7 +71,7 @@ public class SendHl7Message {
 
 	}
 	
-	private void saveMessageToFileSystem(String hl7Message,String hl7MessagesDumpPath){
+	public void saveMessageToFileSystem(String hl7Message,String hl7MessagesDumpPath){
 		File f = new File(hl7MessagesDumpPath, new Random().nextInt() + ".hl7");
 		
 		try {
