@@ -72,7 +72,9 @@ public class SendHl7Message {
 	}
 	
 	public void saveMessageToFileSystem(String hl7Message,String hl7MessagesDumpPath){
-		File f = new File(hl7MessagesDumpPath, new Random().nextInt() + ".hl7");
+		int fileNumber = new Random().nextInt();
+		fileNumber = Math.abs(fileNumber);
+		File f = new File(hl7MessagesDumpPath, fileNumber + ".hl7");
 		
 		try {
 			FilesUtil.writeEmptyFile(f);
@@ -89,6 +91,7 @@ public class SendHl7Message {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, "Unable to write file: " + e1.getMessage());
 			e1.printStackTrace();
 		}
+		
 
 	}
 }

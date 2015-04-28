@@ -95,5 +95,29 @@ public class FilesUtil {
 			output.close();
 		}
 	}
+	
+	static public void writeFileWithContent(File aFile, String aContent) throws IOException,FileNotFoundException {
+		Writer output = new BufferedWriter(new FileWriter(aFile));
+		try {
+			// FileWriter always assumes default encoding is OK!
+			output.write(aContent);
+		} finally {
+			output.close();
+		}
+	}
+	
+   public static void moveFile(File file, String destination, String filePrefix, String separator) throws SecurityException{
+    	File destFolder = new File(destination);
+    	if (!destFolder.exists()) {
+			destFolder.mkdirs();
+		}
+        if (file.renameTo(new File(destination + "/" + filePrefix + separator + file.getName()))) {
+            System.out.println("File moved successful!");
+        } else {
+            System.out.println("File failed to move!");
+        }
+    
+}
+
 
 }
