@@ -53,6 +53,7 @@ public class PidSegmentFiller {
 		pid.getMaritalStatus().getIdentifier()
 				.setValue(person.getMaritalStatus().getValue());
 		pid.getPhoneNumberHome(0).getPhoneNumber().setValue(person.getTelephoneNumber());
+		pid.getMotherSIdentifier(0).getID().setValue(person.getMotherId());
 
 		return pid;
 	}

@@ -23,7 +23,14 @@ public class Person {
 	private Set<PersonAddress> personAddresses;
 	private Location location;
 	private String telephoneNumber;
+	private String motherId;
 		
+	public String getMotherId() {
+		return motherId;
+	}
+	public void setMotherId(String motherId) {
+		this.motherId = motherId;
+	}
 	public String getTelephoneNumber() {
 			return telephoneNumber;
 		}
