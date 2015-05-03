@@ -14,8 +14,7 @@ import ca.uhn.hl7v2.model.v24.segment.PID;
 public class PidSegmentFiller {
 	private PID pid;
 	private Person person;
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss",
-			Locale.ENGLISH);
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH);
 
 	public PidSegmentFiller(PID pid, Person person) {
 		this.pid = pid;
@@ -23,8 +22,7 @@ public class PidSegmentFiller {
 	}
 
 	public PID fillPidSegment() throws DataTypeException, HL7Exception {
-		pid.getPatientName(0).getFamilyName().getSurname()
-				.setValue(person.getLastName());
+		pid.getPatientName(0).getFamilyName().getSurname().setValue(person.getLastName());
 		pid.getPatientName(0).getGivenName().setValue(person.getFirstName());
 		pid.getPatientName(0).getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(person.getMiddleName());
 
@@ -36,22 +34,16 @@ public class PidSegmentFiller {
 		int count = 0;
 		if (identifiers != null) {
 			for (PersonIdentifier personIdentifier : identifiers) {
-				pid.getPatientIdentifierList(count).getID()
-						.setValue(personIdentifier.getIdentifier());
-				pid.getPatientIdentifierList(count)
-						.getIdentifierTypeCode()
-						.setValue(
-								personIdentifier.getIdentifierType().getValue());
+				pid.getPatientIdentifierList(count).getID().setValue(personIdentifier.getIdentifier());
+				pid.getPatientIdentifierList(count).getIdentifierTypeCode().setValue(personIdentifier.getIdentifierType().getValue());
 				count++;
 			}
 		}
 		sdf.format(person.getDob());
 
 		pid.getAdministrativeSex().setValue(person.getSex().getValue());
-		pid.getDateTimeOfBirth().getTimeOfAnEvent()
-				.setValue(sdf.format(person.getDob()));
-		pid.getMaritalStatus().getIdentifier()
-				.setValue(person.getMaritalStatus().getValue());
+		pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(sdf.format(person.getDob()));
+		pid.getMaritalStatus().getIdentifier().setValue(person.getMaritalStatus().getValue());
 		pid.getPhoneNumberHome(0).getPhoneNumber().setValue(person.getTelephoneNumber());
 		pid.getMotherSIdentifier(0).getID().setValue(person.getMotherId());
 
